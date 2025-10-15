@@ -1,0 +1,14 @@
+$TTL    604800
+@       IN      SOA     ns2.l3.ceri.com. root.l3.ceri.com. (
+                        1         ; Serial
+                        604800    ; Refresh
+                        86400     ; Retry
+                        2419200   ; Expire
+                        604800 )  ; Negative Cache TTL
+
+@       IN      NS      ns2.l3.ceri.com.
+
+; ---- PTR ----
+2       IN      PTR     ns2.l3.ceri.com.
+10      IN      PTR     alice.l3.ceri.com.
+11      IN      PTR     bob.l3.ceri.com.
