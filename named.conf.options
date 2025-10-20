@@ -1,0 +1,23 @@
+options {
+    directory "/var/cache/bind";
+
+    // on écoute sur localhost + interface réseau du serveur
+    listen-on { 127.0.0.1; 192.168.1.1; };
+    listen-on-v6 { none; };
+
+    // on autorise les requêtes depuis tout le réseau local
+    allow-query { any; };
+
+    // active la récursion pour les clients internes
+    recursion yes;
+
+    // pas besoin de DNSSEC ici
+    dnssec-validation no;
+
+    // renvoi vers le DNS du NAT VirtualBox pour le monde extérieur
+    forwarders {
+        10.0.2.3;
+    };
+
+    auth-nxdomain no;
+};
