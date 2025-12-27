@@ -6,22 +6,9 @@ OUTPUT="/var/www/html/mails.txt"
 echo "=== MAILS DE STUD ===" > "$OUTPUT"
 echo "" >> "$OUTPUT"
 
-if [ -f "$MAILBOX" ]; hen
-    sed -n '
-    /^From /{
-        print ""
-        print "------------------------------"
-    }
-    /^From |^Subject:|^Date:/p
-    /^$/{
-        print ""
-        getline
-        while ($0 !~ /^From / && !eof) {
-            print
-            getline
-        }
-    }
-    ' "$MAILBOX" >> "$OUTPUT"
+if [ -f "$MAILBOX" ]; then
+    cat "$MAILBOX" >> "$OUTPUT"
 else
     echo "Aucun mail trouvé." >> "$OUTPUT"
 fi
+
