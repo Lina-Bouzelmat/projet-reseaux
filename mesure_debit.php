@@ -9,7 +9,6 @@
 <body>
 
 <header>
-    <h1>AMS - Supervision réseau</h1>
     <nav>
         <a href="index.html">Accueil</a>
         <a href="mesure_debit.php">Débit</a>
@@ -20,7 +19,7 @@
 
 <div class="container">
 
-<h2>Mesures de débit réseau</h2>
+<h1>Mesures de débit réseau</h1>
 
 <table>
 <tr>
@@ -29,14 +28,20 @@
 </tr>
 
 <?php
-$file="debit.csv";
-$lines=[];
+$file = "debit.csv";
 
 if(file_exists($file)){
-    $lines=file($file);
+    $lines = file($file);
     foreach($lines as $line){
-        list($date,$speed)=explode(";",trim($line));
-        echo "<tr><td>$date</td><td>$speed</td></tr>";
+        $line = trim($line);
+        if($line == "") continue;
+
+        list($date,$speed) = explode(",", $line);
+
+        echo "<tr>
+                <td>$date</td>
+                <td>$speed</td>
+              </tr>";
     }
 }
 ?>
@@ -44,16 +49,18 @@ if(file_exists($file)){
 
 <h2>Graphique du débit</h2>
 
-<div class="graph">
+<div class="chart">
 <?php
-$max=30; // débit max attendu
-
-if(!empty($lines)){
+if(file_exists($file)){
+    $lines = file($file);
     foreach($lines as $line){
-        list($date,$speed)=explode(";",trim($line));
-        $height=($speed/$max)*100;
-        echo "<div class='bar'>
-                <div class='value' style='height:{$height}%'></div>
+        $line = trim($line);
+        if($line == "") continue;
+
+        list($date,$speed) = explode(",", $line);
+        $height = $speed * 4; // échelle graphique
+
+        echo "<div class='bar' title='$date : $speed MB/s' style='height:".$height."px'>
                 <span>$speed</span>
               </div>";
     }
