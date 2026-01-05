@@ -2,40 +2,42 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Box AMS</title>
+<title>LinaFAI – Box Internet</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="navbar">
-    <ul>
-        <li><a href="index.html">Accueil</a></li>
-        <li><a href="mesure_debit.php">Débit</a></li>
-        <li><a href="forum.php">Forum</a></li>
-        <li><a href="mails.php">Mail</a></li>
-        <li><a href="addhost.php">DNS</a></li>
-        <li><a href="ip_form.php">IP</a></li>
-    </ul>
-</div>
+<?php include 'menu.php'; ?>
 
 <div class="container">
-    <div class="card">
-        <h1>Bienvenue sur votre box AMS</h1>
-        <p>
+
+    <div class="card" style="text-align:center;">
+        <img src="images/linaFAI.png" alt="LinaFAI"
+             style="max-width:320px;margin-bottom:20px;">
+
+        <h1>Bienvenue sur votre box LinaFAI</h1>
+
+        <p style="margin-top:15px;line-height:1.7;">
             Cette interface vous permet de superviser et administrer
-            les principales fonctionnalités de votre réseau :
+            votre réseau grace aux service proposé par votre fournisseur d’accès Internet.
         </p>
-        <ul style="margin-top:15px;line-height:1.8;">
+    </div>
+
+    <div class="card">
+        <h2>Fonctionnalités disponibles</h2>
+        <ul style="line-height:2;">
             <li> Mesure et visualisation du débit réseau</li>
-            <li> Gestion des mails via Postfix</li>
-            <li> Forum interne</li>
-            <li> Gestion DNS et IP</li>
+            <li> Envoi et consultation de mails (Postfix)</li>
+            <li> Forum interne de discussion</li>
+            <li> Gestion DNS (sous-domaines)</li>
+            <li> Configuration IP automatique et manuelle</li>
         </ul>
     </div>
+
 </div>
 
 <div class="footer">
-    Box AMS – Projet Administration Systèmes & Réseaux
+    LinaFAI – Fournisseur d’accès Internet (Projet AMS)
 </div>
 
 </body>

@@ -15,11 +15,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-<h2>Ajout d’un sous-domaine .ceri.com</h2>
-<form method="post">
-    <label for="hostname">Nom du sous-domaine :</label>
-    <input type="text" name="hostname" id="hostname" required>
-    <input type="submit" value="Ajouter">
-</form>
+    
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Gestion DNS – LinaFAI</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
-<?php echo $message; ?>
+<body>
+
+<?php include 'menu.php'; ?>
+
+<div class="container">
+
+    <h1 class="page-title">Gestion DNS</h1>
+
+    <div class="card">
+        <h2>Ajout d’un sous-domaine <span style="color:#6cf;">.ceri.com</span></h2>
+
+        <p class="text-muted">
+            Cette interface permet d’ajouter dynamiquement un sous-domaine DNS
+            sur le serveur BIND distant.
+        </p>
+
+        <form method="post">
+            <label for="hostname">Nom du sous-domaine :</label>
+            <input type="text" name="hostname" id="hostname" placeholder="ex: box-client" required>
+            <button type="submit">Ajouter le sous-domaine</button>
+        </form>
+
+        <?php echo $message; ?>
+    </div>
+
+</div>
+
+<div class="footer">
+    LinaFAI – Gestion DNS avancée
+</div>
+
+</body>
+</html>

@@ -1,41 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Envoyer un mail</title>
+<meta charset="UTF-8">
+<title>Envoyer un mail – LinaFAI</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h2>Envoyer un mail</h2>
+<?php include 'menu.php'; ?>
 
-<form method="post">
-    <label>À :</label><br>
-    <input type="text" name="to" value="stud" required><br><br>
+<div class="container">
 
-    <label>Sujet :</label><br>
-    <input type="text" name="subject" required><br><br>
+    <h1 class="page-title"> Envoyer un mail</h1>
 
-    <label>Message :</label><br>
-    <textarea name="message" rows="5" cols="40" required></textarea><br><br>
+    <div class="card">
+        <p class="text-muted">
+            Cette interface permet d’envoyer un mail via le serveur Postfix local.
+            Le message sera traité et stocké comme les autres mails reçus.
+        </p>
 
-    <input type="submit" value="Envoyer">
-</form>
+        <form method="post">
+            <label>Destinataire :</label>
+            <input type="text" name="to" value="stud" required>
 
-<?php
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $to = $_POST["to"];
-    $subject = $_POST["subject"];
-    $message = $_POST["message"];
+            <label>Sujet :</label>
+            <input type="text" name="subject" required>
 
-    $headers = "From: web@serveurAMS\n";
+            <label>Message :</label>
+            <textarea name="message" rows="6" required></textarea>
 
-    if (mail($to, $subject, $message, $headers)) {
-        echo "<p>Mail envoyé avec succès.</p>";
-    } else {
-        echo "<p>Erreur lors de l'envoi.</p>";
-    }
-}
-?>
+            <button type="submit">Envoyer le mail</button>
+        </form>
+
+        <?php
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $to = $_POST["to"];
+            $subject = $_POST["subject"];
+            $message = $_POST["message"];
+
+            $headers = "From: web@serveurAMS\n";
+
+            if (mail($to, $subject, $message, $headers)) {
+                echo "<div class='info'>Mail envoyé avec succès.</div>";
+            } else {
+                echo "<div class='error'>Erreur lors de l’envoi du mail.</div>";
+            }
+        }
+        ?>
+    </div>
+
+</div>
+
+<div class="footer">
+    LinaFAI – Envoi de mails via Postfix
+</div>
 
 </body>
 </html>

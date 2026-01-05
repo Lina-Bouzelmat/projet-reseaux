@@ -24,23 +24,15 @@ $result = $conn->query("SELECT * FROM messages ORDER BY date_post DESC LIMIT 10"
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Forum - serveurAMS</title>
-  <style>
-    body{font-family:Arial;background:#111;color:#eee;padding:20px;}
-    h1{color:#6cf;}
-    form{background:#222;padding:15px;border-radius:5px;margin-bottom:20px;}
-    input,textarea{width:100%;margin-bottom:10px;padding:8px;}
-    button{padding:8px 15px;}
-    .message{background:#000;padding:10px;margin-bottom:10px;border-radius:5px;}
-    .date{color:#999;font-size:12px;}
-  </style>
+<meta charset="UTF-8">
+<title>Forum – LinaFAI</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Forum serveurAMS</h1>
+<?php include 'menu.php'; ?>
 
 <form method="post">
   <input type="text" name="pseudo" placeholder="Votre pseudo" required>
@@ -60,6 +52,41 @@ while ($row = $result->fetch_assoc()){
 $conn->close();
 
 ?>
+<div class="container">
+
+    <h1 class="page-title">Forum LinaFAI</h1>
+
+    <div class="card">
+        <h2>Poster un message</h2>
+
+        <form method="post">
+            <input type="text" name="pseudo" placeholder="Votre pseudo" required>
+            <textarea name="message" placeholder="Votre message" required></textarea>
+            <button type="submit">Envoyer</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Derniers messages</h2>
+
+        <?php foreach($messages as $msg){ ?>
+            <div class="forum-message">
+                <div class="forum-header">
+                    <strong><?=htmlspecialchars($msg['pseudo'])?></strong>
+                    <span class="forum-date"><?=$msg['date_post']?></span>
+                </div>
+                <div class="forum-content">
+                    <?=nl2br(htmlspecialchars($msg['message']))?>
+                </div>
+            </div>
+        <?php } ?>
+    </div>
+
+</div>
+
+<div class="footer">
+    LinaFAI – Forum interne
+</div>
 
 </body>
 </html>
