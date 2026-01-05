@@ -7,15 +7,9 @@
 </head>
 <body>
 
-<header>
-    <nav>
-        <a href="index.html">Accueil</a>
-        <a href="mesure_debit.php">Débit</a>
-        <a href="forum.php">Forum</a>
-        <a href="mails.php">Mail</a>
-    </nav>
-</header>
+<?php include("menu.php"); ?>
 
+    
 <div class="container">
 
 <h1>Mesures de débit réseau</h1>
