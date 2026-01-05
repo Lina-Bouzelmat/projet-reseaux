@@ -1,3 +1,4 @@
+/* ===== RESET & BASE ===== */
 *{
     box-sizing:border-box;
     margin:0;
@@ -15,13 +16,14 @@ a{
     color:inherit;
 }
 
+/* ===== CONTAINER ===== */
 .container{
     width:90%;
     max-width:1100px;
     margin:40px auto;
 }
 
-/* ===== MENU ===== */
+/* ===== MENU / NAVBAR ===== */
 .navbar{
     background:#151515;
     border-bottom:1px solid #2a2a2a;
@@ -38,18 +40,23 @@ a{
     font-weight:bold;
 }
 
+.navbar a{
+    color:#eaeaea;
+}
+
 .navbar a:hover{
     color:#35d06e;
 }
 
 /* ===== TITRES ===== */
+.page-title,
 h1{
     color:#35d06e;
     margin-bottom:20px;
 }
 
 h2{
-    margin:30px 0 15px;
+    margin:25px 0 15px;
 }
 
 /* ===== CARTES ===== */
@@ -59,6 +66,13 @@ h2{
     border-radius:10px;
     padding:20px;
     margin-bottom:25px;
+}
+
+/* ===== TEXTE ===== */
+.text-muted{
+    color:#aaa;
+    font-size:14px;
+    margin-bottom:15px;
 }
 
 /* ===== TABLEAUX ===== */
@@ -79,46 +93,200 @@ th{
 }
 
 /* ===== FORMULAIRES ===== */
-input,textarea,select{
+label{
+    display:block;
+    margin-top:10px;
+    margin-bottom:5px;
+}
+
+input,
+textarea,
+select{
     width:100%;
     padding:10px;
-    margin:8px 0 15px;
+    margin-bottom:12px;
     background:#111;
     border:1px solid #333;
     color:#fff;
     border-radius:5px;
 }
 
-button{
+textarea{
+    resize:vertical;
+}
+
+button,
+input[type="submit"]{
     background:#35d06e;
     color:#000;
     border:none;
-    padding:10px 18px;
+    padding:10px 20px;
     border-radius:5px;
     font-weight:bold;
     cursor:pointer;
 }
 
-button:hover{
+button:hover,
+input[type="submit"]:hover{
     opacity:0.85;
 }
 
-/* ===== WARNING ===== */
-.warning{
-    background:#2a1a00;
-    border:1px solid #ff9800;
-    color:#ffb74d;
-    padding:15px;
-    border-radius:8px;
-    margin-bottom:25px;
+/* ===== MESSAGES INFO / ERREUR ===== */
+.info{
+    color:#2ecc71;
+    margin-top:10px;
 }
 
-/* ===== GRAPHIQUE ===== */
-.graph-box{
-    background:#141414;
-    border:1px solid #2a2a2a;
-    padding:20px;
-    border-radius:10px;
+.error{
+    color:#e74c3c;
+    margin-top:10px;
+}
+
+/* ===== WARNING (IP FORM) ===== */
+.warning-box{
+    background:#2c0b0b;
+    border-left:6px solid #e74c3c;
+    padding:15px;
+    margin-bottom:25px;
+    color:#f5c6c6;
+    border-radius:6px;
+}
+
+.warning-box ul{
+    margin:10px 0 10px 20px;
+}
+
+/* ===== TERMINAL (MAILS) ===== */
+.terminal{
+    background:#000;
+    padding:0;
+    overflow:hidden;
+    border-radius:8px;
+}
+
+.terminal-header{
+    background:#111;
+    padding:8px 12px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    border-bottom:1px solid #333;
+}
+
+.dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+.red{background:#ff5f56;}
+.yellow{background:#ffbd2e;}
+.green{background:#27c93f;}
+
+.terminal-title{
+    margin-left:10px;
+    color:#0f0;
+    font-size:13px;
+}
+
+.terminal-body{
+    color:#0f0;
+    padding:15px;
+    font-family:monospace;
+    font-size:13px;
+    max-height:400px;
+    overflow:auto;
+}
+
+/* ===== FORUM ===== */
+.forum-message{
+    background:#111;
+    padding:12px;
+    border-radius:6px;
+    margin-bottom:12px;
+}
+
+.forum-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:5px;
+}
+
+.forum-date{
+    font-size:12px;
+    color:#aaa;
+}
+
+.forum-content{
+    line-height:1.6;
+}
+
+/* ===== GRAPHIQUE DEBIT ===== */
+.chart-container{
+    display:flex;
+    gap:20px;
+}
+
+.y-axis{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    height:260px;
+    font-size:12px;
+    color:#aaa;
+}
+
+.chart{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-evenly;
+    height:260px;
+    flex:1;
+    background:#1b1b1b;
+    border:1px solid #333;
+    padding:20px 40px;
+    border-radius:8px;
+}
+
+.bar{
+    width:50px;
+    background:#35d06e;
+    border-radius:6px 6px 0 0;
+    position:relative;
+}
+
+.bar span{
+    position:absolute;
+    top:-22px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:12px;
+    background:#fff;
+    color:#000;
+    padding:2px 6px;
+    border-radius:4px;
+}
+
+.legend{
+    margin-top:10px;
+    font-size:14px;
+}
+
+.legend span{
+    display:inline-block;
+    width:14px;
+    height:14px;
+    background:#35d06e;
+    margin-right:6px;
+}
+
+/* ===== PRE / OUTPUT ===== */
+pre{
+    background:#000;
+    padding:10px;
+    border-radius:5px;
+    overflow:auto;
+    margin-top:10px;
 }
 
 /* ===== FOOTER ===== */
