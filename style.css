@@ -1,54 +1,40 @@
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,Helvetica,sans-serif;
-}
-
 body{
+    font-family:Arial, sans-serif;
     background:#111;
     color:#eee;
-    padding:20px;
+    margin:0;
+    padding:0;
 }
 
 header{
-    background:#222;
+    background:#0d0d0d;
     padding:15px;
-    margin-bottom:30px;
-    border-bottom:2px solid #444;
-}
-
-header h1{
     text-align:center;
-    color:#4CAF50;
-}
-
-nav{
-    margin-top:10px;
-    text-align:center;
+    border-bottom:2px solid #2ecc71;
 }
 
 nav a{
-    color:#ddd;
-    margin:0 15px;
+    color:#eee;
     text-decoration:none;
+    margin:0 15px;
     font-weight:bold;
 }
 
 nav a:hover{
-    color:#4CAF50;
+    color:#2ecc71;
 }
 
 .container{
-    max-width:900px;
+    width:90%;
     margin:auto;
+    padding:30px;
 }
 
-h2{
-    margin-bottom:15px;
-    color:#4CAF50;
+h1,h2{
+    color:#2ecc71;
 }
 
+/* TABLEAU */
 table{
     width:100%;
     border-collapse:collapse;
@@ -65,12 +51,16 @@ th{
     background:#222;
 }
 
-.graph{
+tr:nth-child(even){
+    background:#1a1a1a;
+}
+
+/* GRAPH BARRES */
+.chart{
     display:flex;
-    gap:20px;
     align-items:flex-end;
-    height:250px;
-    margin-top:20px;
+    gap:20px;
+    height:260px;
     padding:20px;
     background:#1b1b1b;
     border:1px solid #333;
@@ -78,17 +68,19 @@ th{
 
 .bar{
     width:50px;
-    text-align:center;
-    font-size:12px;
-}
-
-.bar .value{
-    width:100%;
-    background:#4CAF50;
+    background:#2ecc71;
     border-radius:5px 5px 0 0;
+    position:relative;
+    display:flex;
+    justify-content:center;
 }
 
 .bar span{
-    display:block;
-    margin-top:5px;
+    position:absolute;
+    top:-22px;
+    background:#fff;
+    color:#000;
+    font-size:12px;
+    padding:2px 5px;
+    border-radius:3px;
 }
