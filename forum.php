@@ -61,7 +61,6 @@ $messages=$pdo->query("SELECT * FROM messages ORDER BY date_post DESC LIMIT 10")
             </div>
         <?php } ?>
     </div>
-
 </div>
 
 <div class="footer">
