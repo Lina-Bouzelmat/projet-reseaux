@@ -1,297 +1,250 @@
-/* ===== RESET & BASE ===== */
+/* ===============================
+   RESET & BASE
+================================ */
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
-    font-family:Arial,Helvetica,sans-serif;
+    box-sizing:border-box;
 }
 
 body{
+    font-family:Arial, Helvetica, sans-serif;
     background:#0f0f0f;
-    color:#eaeaea;
+    color:#eee;
+    line-height:1.6;
 }
 
-a{
-    text-decoration:none;
-    color:inherit;
-}
-
-/* ===== CONTAINER ===== */
-.container{
-    width:90%;
-    max-width:1100px;
-    margin:40px auto;
-}
-
-/* ===== MENU / NAVBAR ===== */
+/* ===============================
+   MENU / NAVBAR
+================================ */
 .navbar{
-    background:#151515;
-    border-bottom:1px solid #2a2a2a;
+    background:linear-gradient(180deg,#141414,#000);
+    border-bottom:1px solid #222;
+    padding:14px 0;
 }
 
-.navbar ul{
+.nav-container{
+    max-width:1100px;
+    margin:auto;
+    padding:0 20px;
     display:flex;
-    gap:30px;
-    list-style:none;
-    padding:18px 30px;
+    align-items:center;
+    justify-content:space-between;
 }
 
-.navbar li{
+.nav-logo{
+    font-size:22px;
     font-weight:bold;
+    color:#2ecc71;
+    letter-spacing:1px;
 }
 
-.navbar a{
-    color:#eaeaea;
+.nav-links{
+    list-style:none;
+    display:flex;
+    gap:18px;
 }
 
-.navbar a:hover{
-    color:#35d06e;
+.nav-links li a{
+    color:#ddd;
+    text-decoration:none;
+    font-weight:500;
+    padding:6px 14px;
+    border-radius:6px;
+    transition:0.2s;
 }
 
-/* ===== TITRES ===== */
-.page-title,
-h1{
-    color:#35d06e;
-    margin-bottom:20px;
+.nav-links li a:hover{
+    background:#2ecc71;
+    color:#000;
 }
 
-h2{
-    margin:25px 0 15px;
+/* ===============================
+   HERO / ACCUEIL
+================================ */
+.hero{
+    height:320px;
+    background-size:cover;
+    background-position:center;
+    position:relative;
+    border-bottom:1px solid #222;
 }
 
-/* ===== CARTES ===== */
-.card{
-    background:linear-gradient(180deg,#1b1b1b,#111);
-    border:1px solid #2a2a2a;
-    border-radius:10px;
+.hero-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.65);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
     padding:20px;
-    margin-bottom:25px;
 }
 
-/* ===== TEXTE ===== */
-.text-muted{
-    color:#aaa;
-    font-size:14px;
+.hero h1{
+    font-size:34px;
+    color:#2ecc71;
+}
+
+.hero h1 span{
+    color:#fff;
+}
+
+.hero p{
+    margin-top:12px;
+    max-width:720px;
+    color:#ccc;
+    font-size:16px;
+}
+
+/* ===============================
+   CONTAINER / CARTES
+================================ */
+.container{
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+.card{
+    background:linear-gradient(180deg,#1a1a1a,#0c0c0c);
+    border:1px solid #222;
+    border-radius:10px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+.card h2{
+    color:#2ecc71;
     margin-bottom:15px;
 }
 
-/* ===== TABLEAUX ===== */
+/* ===============================
+   LISTES
+================================ */
+.features{
+    list-style:none;
+}
+
+.features li{
+    padding:8px 0;
+    font-size:16px;
+}
+
+/* ===============================
+   FORMULAIRES
+================================ */
+form{
+    background:#161616;
+    padding:20px;
+    border-radius:8px;
+    border:1px solid #222;
+}
+
+input, textarea, select{
+    width:100%;
+    padding:10px;
+    margin-bottom:12px;
+    background:#0f0f0f;
+    border:1px solid #333;
+    color:#eee;
+    border-radius:6px;
+}
+
+input:focus, textarea:focus{
+    outline:none;
+    border-color:#2ecc71;
+}
+
+button, input[type="submit"]{
+    background:#2ecc71;
+    color:#000;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.2s;
+}
+
+button:hover, input[type="submit"]:hover{
+    background:#27ae60;
+}
+
+/* ===============================
+   TABLEAUX
+================================ */
 table{
     width:100%;
     border-collapse:collapse;
     margin-top:15px;
 }
 
-th,td{
+th, td{
     border:1px solid #333;
     padding:10px;
     text-align:center;
 }
 
 th{
-    background:#202020;
-}
-
-/* ===== FORMULAIRES ===== */
-label{
-    display:block;
-    margin-top:10px;
-    margin-bottom:5px;
-}
-
-input,
-textarea,
-select{
-    width:100%;
-    padding:10px;
-    margin-bottom:12px;
-    background:#111;
-    border:1px solid #333;
-    color:#fff;
-    border-radius:5px;
-}
-
-textarea{
-    resize:vertical;
-}
-
-button,
-input[type="submit"]{
-    background:#35d06e;
-    color:#000;
-    border:none;
-    padding:10px 20px;
-    border-radius:5px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-button:hover,
-input[type="submit"]:hover{
-    opacity:0.85;
-}
-
-/* ===== MESSAGES INFO / ERREUR ===== */
-.info{
+    background:#1c1c1c;
     color:#2ecc71;
-    margin-top:10px;
 }
 
-.error{
-    color:#e74c3c;
-    margin-top:10px;
+tr:nth-child(even){
+    background:#121212;
 }
 
-/* ===== WARNING (IP FORM) ===== */
-.warning-box{
-    background:#2c0b0b;
-    border-left:6px solid #e74c3c;
-    padding:15px;
-    margin-bottom:25px;
-    color:#f5c6c6;
-    border-radius:6px;
-}
-
-.warning-box ul{
-    margin:10px 0 10px 20px;
-}
-
-/* ===== TERMINAL (MAILS) ===== */
-.terminal{
-    background:#000;
-    padding:0;
-    overflow:hidden;
-    border-radius:8px;
-}
-
-.terminal-header{
-    background:#111;
-    padding:8px 12px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    border-bottom:1px solid #333;
-}
-
-.dot{
-    width:10px;
-    height:10px;
-    border-radius:50%;
-}
-
-.red{background:#ff5f56;}
-.yellow{background:#ffbd2e;}
-.green{background:#27c93f;}
-
-.terminal-title{
-    margin-left:10px;
-    color:#0f0;
-    font-size:13px;
-}
-
-.terminal-body{
-    color:#0f0;
-    padding:15px;
-    font-family:monospace;
-    font-size:13px;
-    max-height:400px;
-    overflow:auto;
-}
-
-/* ===== FORUM ===== */
-.forum-message{
-    background:#111;
+/* ===============================
+   FORUM
+================================ */
+.message{
+    background:#0a0a0a;
+    border:1px solid #222;
     padding:12px;
     border-radius:6px;
     margin-bottom:12px;
 }
 
-.forum-header{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:5px;
-}
-
-.forum-date{
+.date{
     font-size:12px;
-    color:#aaa;
+    color:#888;
 }
 
-.forum-content{
-    line-height:1.6;
-}
-
-/* ===== GRAPHIQUE DEBIT ===== */
-.chart-container{
-    display:flex;
-    gap:20px;
-}
-
-.y-axis{
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    height:260px;
-    font-size:12px;
-    color:#aaa;
-}
-
-.chart{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-evenly;
-    height:260px;
-    flex:1;
-    background:#1b1b1b;
-    border:1px solid #333;
-    padding:20px 40px;
-    border-radius:8px;
-}
-
-.bar{
-    width:50px;
-    background:#35d06e;
-    border-radius:6px 6px 0 0;
-    position:relative;
-}
-
-.bar span{
-    position:absolute;
-    top:-22px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:12px;
-    background:#fff;
-    color:#000;
-    padding:2px 6px;
-    border-radius:4px;
-}
-
-.legend{
-    margin-top:10px;
-    font-size:14px;
-}
-
-.legend span{
-    display:inline-block;
-    width:14px;
-    height:14px;
-    background:#35d06e;
-    margin-right:6px;
-}
-
-/* ===== PRE / OUTPUT ===== */
+/* ===============================
+   MAILS
+================================ */
 pre{
     background:#000;
-    padding:10px;
-    border-radius:5px;
+    border:1px solid #222;
+    padding:15px;
+    border-radius:8px;
     overflow:auto;
-    margin-top:10px;
+    color:#0f0;
 }
 
-/* ===== FOOTER ===== */
+/* ===============================
+   ALERTES
+================================ */
+.warning{
+    background:#2c1a00;
+    border-left:5px solid #e67e22;
+    padding:15px;
+    border-radius:6px;
+    margin-bottom:20px;
+    color:#f1c40f;
+}
+
+/* ===============================
+   FOOTER
+================================ */
 .footer{
+    margin-top:40px;
+    padding:20px;
     text-align:center;
-    color:#777;
-    margin:40px 0 20px;
+    color:#666;
+    font-size:14px;
+    border-top:1px solid #222;
 }
