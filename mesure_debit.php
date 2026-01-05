@@ -5,7 +5,6 @@
 <title>Mesure de débit AMS</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <header>
@@ -13,7 +12,7 @@
         <a href="index.html">Accueil</a>
         <a href="mesure_debit.php">Débit</a>
         <a href="forum.php">Forum</a>
-        <a href="mail.php">Mail</a>
+        <a href="mails.php">Mail</a>
     </nav>
 </header>
 
@@ -29,45 +28,46 @@
 
 <?php
 $file="debit.csv";
+$dates=[];
 $speeds=[];
 
 if(file_exists($file)){
     $lines=file($file);
     foreach($lines as $line){
-        if(trim($line)=="") continue;
-        list($date,$speed)=explode(",",$line);
-        $speeds[]=$speed;
+        list($date,$speed)=explode(",",trim($line));
+        $dates[]=$date;
+        $speeds[]=(float)$speed;
         echo "<tr><td>$date</td><td>$speed</td></tr>";
     }
 }
-$max=max($speeds);
 ?>
 </table>
 
 <h2>Graphique du débit</h2>
 
-<div class="graph-wrapper">
+<div class="chart-container">
 
-<!-- ECHELLE -->
-<div class="y-axis">
-    <div><?=round($max)?> MB/s</div>
-    <div><?=round($max*0.75)?></div>
-    <div><?=round($max*0.5)?></div>
-    <div><?=round($max*0.25)?></div>
-    <div>0</div>
-</div>
+    <div class="y-axis">
+        <div>35</div>
+        <div>30</div>
+        <div>25</div>
+        <div>20</div>
+        <div>15</div>
+        <div>10</div>
+        <div>5</div>
+        <div>0</div>
+    </div>
 
-<!-- GRAPH -->
-<div class="chart">
-<?php
-foreach($speeds as $speed){
-    $height=($speed/$max)*240;
-    echo "<div class='bar' style='height:{$height}px'>
-            <span>$speed</span>
-          </div>";
-}
-?>
-</div>
+    <div class="chart">
+        <?php
+        $max=35; // échelle FIXE
+        foreach($speeds as $s){
+            $height=($s/$max)*100;
+            echo "<div class='bar' style='height:$height%'><span>$s</span></div>";
+        }
+        ?>
+    </div>
+
 </div>
 
 <div class="legend">
@@ -75,5 +75,6 @@ foreach($speeds as $speed){
 </div>
 
 </div>
+
 </body>
 </html>

@@ -1,5 +1,59 @@
-/* GRAPH BARRES AVEC ECHELLE */
-.graph-wrapper{
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#111;
+    color:#eee;
+}
+
+header{
+    background:#000;
+    border-bottom:2px solid #2ecc71;
+}
+
+nav{
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    padding:15px 0;
+}
+
+nav a{
+    color:#eee;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+nav a:hover{
+    color:#2ecc71;
+}
+
+.container{
+    max-width:1100px;
+    margin:40px auto;
+    padding:20px;
+}
+
+h1,h2{
+    color:#2ecc71;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:40px;
+}
+
+th,td{
+    border:1px solid #444;
+    padding:10px;
+    text-align:center;
+}
+
+th{
+    background:#222;
+}
+
+.chart-container{
     display:flex;
     gap:20px;
 }
@@ -16,16 +70,16 @@
 .chart{
     display:flex;
     align-items:flex-end;
-    gap:14px; /* ESPACE ENTRE BARRES */
+    justify-content:space-evenly;
     height:260px;
-    padding:20px;
+    flex:1;
     background:#1b1b1b;
     border:1px solid #333;
-    flex:1;
+    padding:20px 40px;
 }
 
 .bar{
-    width:40px;
+    width:50px;
     background:#2ecc71;
     border-radius:6px 6px 0 0;
     position:relative;
@@ -36,25 +90,22 @@
     top:-22px;
     left:50%;
     transform:translateX(-50%);
+    font-size:12px;
     background:#fff;
     color:#000;
-    font-size:11px;
-    padding:2px 5px;
-    border-radius:3px;
-    white-space:nowrap;
+    padding:2px 6px;
+    border-radius:4px;
 }
 
-/* LEGENDE */
 .legend{
-    margin-top:15px;
+    margin-top:10px;
     font-size:14px;
 }
 
 .legend span{
     display:inline-block;
-    width:15px;
-    height:15px;
+    width:14px;
+    height:14px;
     background:#2ecc71;
-    margin-right:8px;
-    vertical-align:middle;
+    margin-right:6px;
 }
