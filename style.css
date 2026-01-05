@@ -1,250 +1,197 @@
-/* ===============================
-   RESET & BASE
-================================ */
+/* ===== RESET ===== */
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-}
-
-body{
     font-family:Arial, Helvetica, sans-serif;
-    background:#0f0f0f;
+}
+
+/* ===== BODY ===== */
+body{
+    background:#0e0e0e;
     color:#eee;
-    line-height:1.6;
 }
 
-/* ===============================
-   MENU / NAVBAR
-================================ */
-.navbar{
-    background:linear-gradient(180deg,#141414,#000);
+/* ===== HEADER / MENU ===== */
+header{
+    background:linear-gradient(180deg,#111,#000);
     border-bottom:1px solid #222;
-    padding:14px 0;
 }
 
-.nav-container{
-    max-width:1100px;
+.navbar{
+    max-width:1200px;
     margin:auto;
-    padding:0 20px;
     display:flex;
     align-items:center;
     justify-content:space-between;
+    padding:15px 20px;
 }
 
-.nav-logo{
+.logo{
+    color:#3ddc84;
     font-size:22px;
     font-weight:bold;
-    color:#2ecc71;
-    letter-spacing:1px;
+    letter-spacing:2px;
 }
 
-.nav-links{
+.navbar ul{
     list-style:none;
     display:flex;
-    gap:18px;
+    gap:20px;
 }
 
-.nav-links li a{
+.navbar ul li a{
     color:#ddd;
     text-decoration:none;
-    font-weight:500;
-    padding:6px 14px;
+    font-size:15px;
+    padding:8px 14px;
     border-radius:6px;
-    transition:0.2s;
+    transition:0.3s;
 }
 
-.nav-links li a:hover{
-    background:#2ecc71;
+.navbar ul li a:hover,
+.navbar ul li a.active{
+    background:#3ddc84;
     color:#000;
 }
 
-/* ===============================
-   HERO / ACCUEIL
-================================ */
-.hero{
-    height:320px;
-    background-size:cover;
-    background-position:center;
-    position:relative;
-    border-bottom:1px solid #222;
-}
-
-.hero-overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,0.65);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
+/* ===== CONTAINER ===== */
+.container{
+    max-width:1200px;
+    margin:40px auto;
     padding:20px;
 }
 
-.hero h1{
-    font-size:34px;
-    color:#2ecc71;
-}
-
-.hero h1 span{
-    color:#fff;
-}
-
-.hero p{
-    margin-top:12px;
-    max-width:720px;
-    color:#ccc;
-    font-size:16px;
-}
-
-/* ===============================
-   CONTAINER / CARTES
-================================ */
-.container{
-    max-width:1100px;
-    margin:30px auto;
-    padding:0 20px;
-}
-
+/* ===== CARDS ===== */
 .card{
     background:linear-gradient(180deg,#1a1a1a,#0c0c0c);
     border:1px solid #222;
-    border-radius:10px;
-    padding:25px;
-    margin-bottom:25px;
-    box-shadow:0 0 20px rgba(0,0,0,0.4);
+    border-radius:12px;
+    padding:30px;
+    margin-bottom:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
-.card h2{
-    color:#2ecc71;
+/* ===== TITRES ===== */
+h1{
+    color:#3ddc84;
+    margin-bottom:20px;
+}
+
+h2{
+    color:#fff;
     margin-bottom:15px;
 }
 
-/* ===============================
-   LISTES
-================================ */
-.features{
-    list-style:none;
+p{
+    line-height:1.6;
+    color:#ccc;
 }
 
-.features li{
-    padding:8px 0;
-    font-size:16px;
-}
-
-/* ===============================
-   FORMULAIRES
-================================ */
-form{
-    background:#161616;
-    padding:20px;
-    border-radius:8px;
-    border:1px solid #222;
-}
-
-input, textarea, select{
-    width:100%;
-    padding:10px;
-    margin-bottom:12px;
-    background:#0f0f0f;
-    border:1px solid #333;
-    color:#eee;
-    border-radius:6px;
-}
-
-input:focus, textarea:focus{
-    outline:none;
-    border-color:#2ecc71;
-}
-
-button, input[type="submit"]{
-    background:#2ecc71;
-    color:#000;
-    border:none;
-    padding:10px 18px;
-    border-radius:6px;
-    cursor:pointer;
-    font-weight:bold;
-    transition:0.2s;
-}
-
-button:hover, input[type="submit"]:hover{
-    background:#27ae60;
-}
-
-/* ===============================
-   TABLEAUX
-================================ */
+/* ===== TABLE ===== */
 table{
     width:100%;
     border-collapse:collapse;
-    margin-top:15px;
+    margin-top:20px;
 }
 
-th, td{
-    border:1px solid #333;
-    padding:10px;
+th,td{
+    padding:12px;
+    border-bottom:1px solid #333;
     text-align:center;
 }
 
 th{
-    background:#1c1c1c;
-    color:#2ecc71;
+    color:#3ddc84;
+    font-weight:bold;
 }
 
-tr:nth-child(even){
-    background:#121212;
+/* ===== FORM ===== */
+form{
+    margin-top:20px;
 }
 
-/* ===============================
-   FORUM
-================================ */
-.message{
-    background:#0a0a0a;
-    border:1px solid #222;
-    padding:12px;
-    border-radius:6px;
+input,textarea,button{
+    width:100%;
+    padding:10px;
     margin-bottom:12px;
+    border-radius:6px;
+    border:none;
+    outline:none;
 }
 
-.date{
-    font-size:12px;
-    color:#888;
+input,textarea{
+    background:#111;
+    color:#eee;
+    border:1px solid #333;
 }
 
-/* ===============================
-   MAILS
-================================ */
-pre{
-    background:#000;
-    border:1px solid #222;
+button{
+    background:#3ddc84;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#2fbf73;
+}
+
+/* ===== WARNING ===== */
+.warning{
+    background:#2a1b00;
+    border:1px solid #ff9800;
+    color:#ffb74d;
     padding:15px;
     border-radius:8px;
-    overflow:auto;
-    color:#0f0;
-}
-
-/* ===============================
-   ALERTES
-================================ */
-.warning{
-    background:#2c1a00;
-    border-left:5px solid #e67e22;
-    padding:15px;
-    border-radius:6px;
     margin-bottom:20px;
-    color:#f1c40f;
 }
 
-/* ===============================
-   FOOTER
-================================ */
-.footer{
-    margin-top:40px;
+/* ===== GRAPH ===== */
+.graph-container{
+    margin-top:30px;
+    background:#111;
     padding:20px;
+    border-radius:12px;
+    border:1px solid #222;
+}
+
+.bar-wrapper{
+    display:flex;
+    align-items:flex-end;
+    gap:25px;
+    height:300px;
+    padding:20px;
+}
+
+.bar{
+    width:60px;
+    background:#3ddc84;
+    border-radius:6px 6px 0 0;
+    position:relative;
+}
+
+.bar span{
+    position:absolute;
+    top:-28px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#fff;
+    color:#000;
+    padding:3px 6px;
+    font-size:12px;
+    border-radius:4px;
+}
+
+.scale{
+    color:#888;
+    font-size:13px;
+}
+
+/* ===== FOOTER ===== */
+footer{
     text-align:center;
+    padding:20px;
     color:#666;
-    font-size:14px;
-    border-top:1px solid #222;
+    font-size:13px;
 }
