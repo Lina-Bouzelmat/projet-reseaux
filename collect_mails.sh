@@ -7,7 +7,24 @@ echo "=== MAILS DE STUD ===" > "$OUTPUT"
 echo "" >> "$OUTPUT"
 
 if [ -f "$MAILBOX" ]; then
-    cat "$MAILBOX" >> "$OUTPUT"
+    awk '
+    /^From / {
+        if (NR != 1) print "\n--------------------------\n"
+        print
+        next
+    }
+    /^Subject:|^Date:/ {
+        print
+        next
+    }
+    /^$/ {
+        body=1
+        next
+    }
+    body {
+        print
+    }
+    ' "$MAILBOX" >> "$OUTPUT"
 else
     echo "Aucun mail trouvé." >> "$OUTPUT"
 fi
