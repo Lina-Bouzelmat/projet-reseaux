@@ -1,26 +1,44 @@
 <?php
 $message = "";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$dns_ip = "192.168.1.1";     // IP de DNSp (DNS principal)
+$dns_user = "stud";          // user sur DNSp
+$zone_file = "/etc/bind/db.ceri.com";
+$zone_name = "ceri.com";
 
-    if (!empty($_POST['hostname'])) {
+$target_ip = "192.168.1.14"; // IP cible du sous-domaine (machine client / box / etc.)
 
-        // Nettoyage du nom
-        $hostname = preg_replace('/[^a-zA-Z0-9\-]/', '', $_POST['hostname']);
+if($_SERVER["REQUEST_METHOD"] === "POST") {
+    $hostname = $_POST["hostname"] ?? "";
+    $hostname = trim($hostname);
 
-        // IP DU CLIENT À ASSOCIER AU SOUS-DOMAINE
-        // (ici client = 192.168.1.14 comme sur tes captures)
-        $client_ip = "192.168.1.14";
-
-        // COMMANDE SSH VERS DNSP (DNS PRINCIPAL)
-        $cmd = "ssh stud@192.168.1.1 \"echo '$hostname IN A $client_ip' | sudo tee -a /etc/bind/db.ceri.com && sudo systemctl restart bind9\"";
-
-        $output = shell_exec($cmd);
-
-        $message = "<p style='color:green;'>Sous-domaine <strong>$hostname.ceri.com</strong> ajouté avec succès.</p>";
-
+    // accepte : lettres, chiffres, tiret (ex: box-client)
+    if($hostname === "" || !preg_match("/^[a-zA-Z0-9-]+$/", $hostname)) {
+        $message = "<p style='color:#ff6b6b;'>Erreur : nom invalide (lettres/chiffres/tiret uniquement).</p>";
     } else {
-        $message = "<p style='color:red;'>Erreur : aucune saisie détectée.</p>";
+        $hostname = strtolower($hostname);
+
+        // ligne à ajouter dans la zone (pas de quotes !)
+        $line = $hostname." IN A ".$target_ip;
+
+        // commande distante (tee + check + restart)
+        $remote = "echo ".escapeshellarg($line)." | sudo tee -a ".escapeshellarg($zone_file)." >/dev/null"
+                ." && sudo named-checkzone ".escapeshellarg($zone_name)." ".escapeshellarg($zone_file)
+                ." && sudo systemctl restart bind9";
+
+        // IMPORTANT: exécuté par www-data → SSH doit marcher sans mot de passe (clé) + sudo NOPASSWD côté DNSp
+        $cmd = "ssh -o BatchMode=yes -o StrictHostKeyChecking=no ".$dns_user."@".$dns_ip." ".escapeshellarg($remote)." 2>&1";
+
+        $output = [];
+        $ret = 0;
+        exec($cmd, $output, $ret);
+        $outText = htmlspecialchars(implode("\n", $output));
+
+        if($ret === 0) {
+            $message = "<p style='color:#3ddc84;'>Sous-domaine <b>".$hostname.".".$zone_name."</b> ajouté (A → ".$target_ip.").</p>";
+        } else {
+            $message = "<p style='color:#ff6b6b;'><b>Erreur :</b> l'ajout a échoué (SSH/sudo/BIND).</p><pre>".$outText."</pre>";
+        }
     }
 }
 ?>
@@ -32,21 +50,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Gestion DNS – LinaFAI</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<?php include 'menu.php'; ?>
+<?php include "menu.php"; ?>
 
 <div class="container">
-
     <h1>Gestion DNS</h1>
 
     <div class="card">
-        <h2>Ajout d’un sous-domaine <span style="color:#3ddc84;">.ceri.com</span></h2>
+        <h2>Ajout d’un sous-domaine <span style="color:#6cf;">.ceri.com</span></h2>
 
-        <p>
-            Cette interface permet d’ajouter dynamiquement un sous-domaine DNS
-            sur le serveur DNS principal (DNSP).
+        <p style="color:#ccc;line-height:1.6;">
+            Ajout automatique d’une entrée DNS sur le serveur DNS principal (DNSp).
         </p>
 
         <form method="post">
@@ -55,10 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Ajouter le sous-domaine</button>
         </form>
 
-        <?= $message ?>
-
+        <?php echo $message; ?>
     </div>
-
 </div>
 
 </body>
