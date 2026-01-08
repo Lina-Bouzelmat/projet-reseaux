@@ -12,14 +12,14 @@
 <div class="container">
 
     <div class="card" style="text-align:center;">
-        <img src="images/linaFAI.png" alt="LinaFAI"
+        <img src="images/linaFAI.jpeg" alt="LinaFAI"
              style="max-width:320px;margin-bottom:20px;">
 
         <h1>Bienvenue sur votre box LinaFAI</h1>
 
         <p style="margin-top:15px;line-height:1.7;">
             Cette interface vous permet de superviser et administrer
-            votre réseau grace aux service proposé par votre fournisseur d’accès Internet.
+            votre réseau grace aux services proposés par votre fournisseur d’accès Internet.
         </p>
     </div>
 

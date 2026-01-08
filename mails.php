@@ -14,14 +14,13 @@
 
     <h1 class="page-title"> Boîte mail – stud</h1>
 
-    <div class="card terminal">
+    <div style="margin-bottom:20px;">
+	<a href="send_mail.php">
+	<button> Envoyer un mail</button>
+	</a>
+    </div>
 
-        <div class="terminal-header">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
-            <span class="terminal-title">/var/mail/stud</span>
-        </div>
+    <div class="card terminal">
 
         <pre class="terminal-body">
 <?php

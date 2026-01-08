@@ -1,0 +1,8 @@
+=== MAILS DE STUD ===
+
+From stud@ubuntu  Fri Dec 26 04:29:57 2025
+Subject: POSTFIX OK
+Date: Fri, 26 Dec 2025 04:29:57 +0100 (CET)
+From stud@ubuntu  Fri Dec 26 04:30:18 2025
+Subject: POSTFIX OK
+Date: Fri, 26 Dec 2025 04:30:18 +0100 (CET)

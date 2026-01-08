@@ -42,7 +42,8 @@
             $headers = "From: web@serveurAMS\n";
 
             if (mail($to, $subject, $message, $headers)) {
-                echo "<div class='info'>Mail envoyé avec succès.</div>";
+		shell_exec("sudo /home/stud/collect_mails.sh");
+		 echo "<div class='info'>Mail envoyé avec succès.</div>";
             } else {
                 echo "<div class='error'>Erreur lors de l’envoi du mail.</div>";
             }

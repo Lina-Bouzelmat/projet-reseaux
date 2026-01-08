@@ -49,8 +49,9 @@ $messages=$pdo->query("SELECT * FROM messages ORDER BY date_post DESC LIMIT 10")
     <div class="card">
         <h2>Derniers messages</h2>
 
+
         <?php foreach($messages as $msg){ ?>
-            <div class="forum-message">
+            <div class="card">
                 <div class="forum-header">
                     <strong><?=htmlspecialchars($msg['pseudo'])?></strong>
                     <span class="forum-date"><?=$msg['date_post']?></span>
