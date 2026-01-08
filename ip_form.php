@@ -15,7 +15,7 @@
     <h1>Gestion de l’adresse IP</h1>
 
     <div class="warning">
-        ⚠️ <strong>Attention :</strong><br>
+        <strong>Attention :</strong><br>
         Les modifications effectuées sur cette page impactent directement la
         configuration réseau de votre infrastructure.<br>
         Si vous ne maîtrisez pas les notions d’adressage IP, DHCP et réseau,
