@@ -1,5 +1,4 @@
 <?php
-
 $host = "localhost";
 $dbname = "natbox_db";
 $user = "root";
@@ -11,5 +10,4 @@ try {
 } catch(PDOException $e) {
     die("Erreur connexion BDD : " . $e->getMessage());
 }
-
 ?>
