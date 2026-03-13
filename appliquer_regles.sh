@@ -14,7 +14,7 @@ case "$jour_en" in
     *) exit 0 ;;
 esac
 
-mysql -u root -p'ton_mot_de_passe_mysql' natbox_db -N -e "
+mysql -u root -p'root' natbox_db -N -e "
 SELECT a.mac, r.heure_debut, r.heure_fin
 FROM regles_parentales r
 JOIN appareils a ON r.appareil_id = a.id
