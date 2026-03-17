@@ -11,19 +11,18 @@ $jours = [
     "dimanche" => "Dimanche"
 ];
 
-$appareilGlobal = $pdo->query("SELECT id FROM appareils WHERE nom = 'TOUS_LES_APPAREILS' LIMIT 1")->fetch(PDO::FETCH_ASSOC);
-$appareil_global_id = $appareilGlobal ? $appareilGlobal['id'] : 0;
+$appareilGlobal = $pdo->query("SELECT id FROM appareils WHERE nom='TOUS_LES_APPAREILS' LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+$appareil_global_id = $appareilGlobal ? (int)$appareilGlobal['id'] : 0;
 
-$regles = [];
+$grille = [];
 if($appareil_global_id){
-    $stmt = $pdo->prepare("SELECT * FROM regles_parentales WHERE appareil_id = ?");
+    $stmt = $pdo->prepare("SELECT jour, heure, bloque FROM grille_horaire WHERE appareil_id = ?");
     $stmt->execute([$appareil_global_id]);
-    $regles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$reglesParJour = [];
-foreach($regles as $regle){
-    $reglesParJour[$regle['jour']] = $regle;
+    foreach($rows as $row){
+        $grille[$row['jour']][(int)$row['heure']] = (int)$row['bloque'];
+    }
 }
 
 $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREILS' ORDER BY ip ASC")->fetchAll(PDO::FETCH_ASSOC);
@@ -38,10 +37,10 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
             font-family:Arial,sans-serif;
             background:#f4f6f9;
             margin:0;
-            padding:30px;
+            padding:20px;
         }
         .container{
-            max-width:1200px;
+            max-width:1400px;
             margin:auto;
         }
         .box{
@@ -55,40 +54,6 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
             margin-top:0;
             color:#1f2d3d;
         }
-        table{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:15px;
-        }
-        th,td{
-            border:1px solid #ddd;
-            padding:10px;
-            text-align:center;
-        }
-        th{
-            background:#2563eb;
-            color:#fff;
-        }
-        input[type="time"]{
-            padding:8px;
-            border:1px solid #ccc;
-            border-radius:8px;
-        }
-        button{
-            margin-top:20px;
-            background:#2563eb;
-            color:#fff;
-            border:none;
-            padding:12px 18px;
-            border-radius:8px;
-            cursor:pointer;
-        }
-        button:hover{
-            background:#1d4ed8;
-        }
-        .left{
-            text-align:left;
-        }
         .btn{
             display:inline-block;
             background:#111827;
@@ -101,9 +66,88 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
         .btn:hover{
             background:#000;
         }
-        .vide{
-            color:#666;
-            font-style:italic;
+        .grille{
+            overflow-x:auto;
+        }
+        table{
+            border-collapse:collapse;
+            width:100%;
+        }
+        th,td{
+            border:1px solid #ddd;
+            text-align:center;
+            padding:6px;
+        }
+        th{
+            background:#2563eb;
+            color:#fff;
+            font-size:13px;
+        }
+        .jour{
+            background:#f3f4f6;
+            font-weight:bold;
+            min-width:110px;
+            text-align:left;
+            padding-left:10px;
+        }
+        .cell{
+            width:28px;
+            height:28px;
+            cursor:pointer;
+            border-radius:4px;
+            display:inline-block;
+        }
+        .bloque{
+            background:#ef4444;
+        }
+        .autorise{
+            background:#22c55e;
+        }
+        .legende{
+            margin:15px 0;
+        }
+        .legende span{
+            display:inline-block;
+            margin-right:20px;
+        }
+        .carre{
+            width:16px;
+            height:16px;
+            display:inline-block;
+            vertical-align:middle;
+            margin-right:6px;
+            border-radius:3px;
+        }
+        .red{background:#ef4444;}
+        .green{background:#22c55e;}
+        .actions{
+            margin-top:20px;
+        }
+        button{
+            background:#2563eb;
+            color:#fff;
+            border:none;
+            padding:12px 18px;
+            border-radius:8px;
+            cursor:pointer;
+            margin-right:10px;
+        }
+        button:hover{
+            background:#1d4ed8;
+        }
+        .small{
+            font-size:13px;
+            color:#555;
+        }
+        .liste{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:15px;
+        }
+        .liste th,.liste td{
+            border:1px solid #ddd;
+            padding:10px;
+            text-align:left;
         }
     </style>
 </head>
@@ -116,53 +160,56 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
     </div>
 
     <div class="box">
-        <h1>Gestion des restrictions de connexion</h1>
-        <p>
-            Cette première version applique les restrictions à tout le réseau interne.
-            Les appareils détectés sont affichés plus bas à partir de la box.
+        <h1>Pages horaires</h1>
+        <p class="small">
+            Clique sur une case pour changer l’état :
+            vert = autorisé, rouge = bloqué.
+            Cette première version s’applique à tout le réseau.
         </p>
 
-        <form action="save_restrictions.php" method="post">
-            <table>
-                <tr>
-                    <th>Jour</th>
-                    <th>Actif</th>
-                    <th>Début blocage</th>
-                    <th>Fin blocage</th>
-                </tr>
-                <?php foreach($jours as $cle => $libelle): 
-                    $regle = isset($reglesParJour[$cle]) ? $reglesParJour[$cle] : null;
-                ?>
-                <tr>
-                    <td class="left"><?= $libelle ?></td>
-                    <td>
-                        <input type="checkbox" name="actif[<?= $cle ?>]" value="1"
-                        <?= ($regle && $regle['actif']) ? 'checked' : '' ?>>
-                    </td>
-                    <td>
-                        <input type="time" name="heure_debut[<?= $cle ?>]"
-                        value="<?= $regle ? substr($regle['heure_debut'],0,5) : '00:00' ?>">
-                    </td>
-                    <td>
-                        <input type="time" name="heure_fin[<?= $cle ?>]"
-                        value="<?= $regle ? substr($regle['heure_fin'],0,5) : '08:00' ?>">
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </table>
+        <div class="legende">
+            <span><span class="carre green"></span>Autorisé</span>
+            <span><span class="carre red"></span>Bloqué</span>
+        </div>
 
-            <button type="submit">Enregistrer les restrictions</button>
+        <form action="save_restrictions.php" method="post">
+            <div class="grille">
+                <table>
+                    <tr>
+                        <th>Jour</th>
+                        <?php for($h=0;$h<24;$h++): ?>
+                            <th><?= $h ?></th>
+                        <?php endfor; ?>
+                    </tr>
+
+                    <?php foreach($jours as $cle => $libelle): ?>
+                        <tr>
+                            <td class="jour"><?= $libelle ?></td>
+                            <?php for($h=0;$h<24;$h++): 
+                                $bloque = isset($grille[$cle][$h]) ? $grille[$cle][$h] : 0;
+                            ?>
+                                <td>
+                                    <input type="hidden" name="grille[<?= $cle ?>][<?= $h ?>]" value="<?= $bloque ?>" class="input-hidden">
+                                    <div class="cell <?= $bloque ? 'bloque' : 'autorise' ?>" onclick="toggleCell(this)"></div>
+                                </td>
+                            <?php endfor; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
+
+            <div class="actions">
+                <button type="submit">Enregistrer la grille</button>
+                <button type="button" onclick="toutAutoriser()">Tout autoriser</button>
+                <button type="button" onclick="toutBloquer()">Tout bloquer</button>
+            </div>
         </form>
     </div>
 
     <div class="box">
         <h2>Appareils connectés à la box</h2>
-        <p>
-            Cette liste provient de la table <strong>appareils</strong> alimentée par le script de scan ARP.
-        </p>
-
         <?php if(count($appareils) > 0): ?>
-            <table>
+            <table class="liste">
                 <tr>
                     <th>ID</th>
                     <th>Nom</th>
@@ -170,19 +217,54 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
                     <th>MAC</th>
                 </tr>
                 <?php foreach($appareils as $appareil): ?>
-                <tr>
-                    <td><?= htmlspecialchars($appareil['id']) ?></td>
-                    <td><?= htmlspecialchars($appareil['nom'] ? $appareil['nom'] : 'Appareil') ?></td>
-                    <td><?= htmlspecialchars($appareil['ip']) ?></td>
-                    <td><?= htmlspecialchars($appareil['mac']) ?></td>
-                </tr>
+                    <tr>
+                        <td><?= htmlspecialchars($appareil['id']) ?></td>
+                        <td><?= htmlspecialchars($appareil['nom'] ? $appareil['nom'] : 'Appareil') ?></td>
+                        <td><?= htmlspecialchars($appareil['ip']) ?></td>
+                        <td><?= htmlspecialchars($appareil['mac']) ?></td>
+                    </tr>
                 <?php endforeach; ?>
             </table>
         <?php else: ?>
-            <p class="vide">Aucun appareil détecté pour le moment.</p>
+            <p>Aucun appareil détecté.</p>
         <?php endif; ?>
     </div>
 
 </div>
+
+<script>
+function toggleCell(cell){
+    const input = cell.parentElement.querySelector('.input-hidden');
+    if(input.value === "1"){
+        input.value = "0";
+        cell.classList.remove('bloque');
+        cell.classList.add('autorise');
+    }else{
+        input.value = "1";
+        cell.classList.remove('autorise');
+        cell.classList.add('bloque');
+    }
+}
+
+function toutBloquer(){
+    document.querySelectorAll('.input-hidden').forEach(function(input){
+        input.value = "1";
+    });
+    document.querySelectorAll('.cell').forEach(function(cell){
+        cell.classList.remove('autorise');
+        cell.classList.add('bloque');
+    });
+}
+
+function toutAutoriser(){
+    document.querySelectorAll('.input-hidden').forEach(function(input){
+        input.value = "0";
+    });
+    document.querySelectorAll('.cell').forEach(function(cell){
+        cell.classList.remove('bloque');
+        cell.classList.add('autorise');
+    });
+}
+</script>
 </body>
 </html>
