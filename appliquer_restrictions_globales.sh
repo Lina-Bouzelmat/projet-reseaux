@@ -1,7 +1,7 @@
 #!/bin/bash
 
 jour_en=$(date +%A)
-heure_actuelle=$(date +%H:%M:%S)
+heure_actuelle=$(date +%H)
 
 case "$jour_en" in
     Monday) jour_fr="lundi" ;;
@@ -14,20 +14,17 @@ case "$jour_en" in
     *) exit 0 ;;
 esac
 
-resultat=$(mysql -u root -p'root' natbox_db -N -e "
-SELECT r.actif, r.heure_debut, r.heure_fin
-FROM regles_parentales r
-JOIN appareils a ON r.appareil_id = a.id
+resultat=$(mysql -u root -p'TON_MDP_MYSQL' natbox_db -N -e "
+SELECT g.bloque
+FROM grille_horaire g
+JOIN appareils a ON g.appareil_id = a.id
 WHERE a.nom = 'TOUS_LES_APPAREILS'
-AND r.jour = '$jour_fr'
+AND g.jour = '$jour_fr'
+AND g.heure = $heure_actuelle
 LIMIT 1;
 ")
 
-actif=$(echo "$resultat" | awk '{print $1}')
-debut=$(echo "$resultat" | awk '{print $2}')
-fin=$(echo "$resultat" | awk '{print $3}')
-
-if [ "$actif" = "1" ] && [[ "$heure_actuelle" > "$debut" && "$heure_actuelle" < "$fin" ]]; then
+if [ "$resultat" = "1" ]; then
     iptables -C FORWARD -i eth1 -o eth0 -j DROP 2>/dev/null || iptables -I FORWARD -i eth1 -o eth0 -j DROP
 else
     iptables -D FORWARD -i eth1 -o eth0 -j DROP 2>/dev/null
