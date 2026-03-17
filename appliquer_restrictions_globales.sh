@@ -14,18 +14,33 @@ case "$jour_en" in
     *) exit 0 ;;
 esac
 
-resultat=$(mysql -u root -p'TON_MDP_MYSQL' natbox_db -N -e "
-SELECT g.bloque
+MYSQL_CMD="mysql -u root -p'TON_MDP_MYSQL' natbox_db -N -e"
+
+macs_a_bloquer=$($MYSQL_CMD "
+SELECT a.mac
 FROM grille_horaire g
 JOIN appareils a ON g.appareil_id = a.id
-WHERE a.nom = 'TOUS_LES_APPAREILS'
-AND g.jour = '$jour_fr'
+WHERE g.jour = '$jour_fr'
 AND g.heure = $heure_actuelle
-LIMIT 1;
+AND g.bloque = 1;
 ")
 
-if [ "$resultat" = "1" ]; then
-    iptables -C FORWARD -i eth1 -o eth0 -j DROP 2>/dev/null || iptables -I FORWARD -i eth1 -o eth0 -j DROP
-else
-    iptables -D FORWARD -i eth1 -o eth0 -j DROP 2>/dev/null
-fi
+toutes_macs=$($MYSQL_CMD "
+SELECT mac
+FROM appareils
+WHERE mac <> '00:00:00:00:00:00';
+")
+
+for mac in $macs_a_bloquer
+do
+    iptables -C FORWARD -m mac --mac-source "$mac" -j DROP 2>/dev/null || \
+    iptables -I FORWARD -m mac --mac-source "$mac" -j DROP
+done
+
+for mac in $toutes_macs
+do
+    echo "$macs_a_bloquer" | grep -q "$mac"
+    if [ $? -ne 0 ]; then
+        iptables -D FORWARD -m mac --mac-source "$mac" -j DROP 2>/dev/null
+    fi
+done
