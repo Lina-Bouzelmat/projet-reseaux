@@ -44,128 +44,32 @@ foreach($appareils as $appareil){
     <meta charset="UTF-8">
     <title>Gestion des restrictions NATBOX</title>
     <style>
-        body{
-            font-family:Arial,sans-serif;
-            background:#f4f6f9;
-            margin:0;
-            padding:20px;
-        }
-        .container{
-            max-width:1400px;
-            margin:auto;
-        }
-        .box{
-            background:#fff;
-            padding:20px;
-            border-radius:12px;
-            box-shadow:0 2px 8px rgba(0,0,0,.08);
-            margin-bottom:25px;
-        }
-        h1,h2{
-            margin-top:0;
-            color:#1f2d3d;
-        }
-        .btn{
-            display:inline-block;
-            background:#111827;
-            color:#fff;
-            padding:10px 14px;
-            border-radius:8px;
-            text-decoration:none;
-            margin-right:10px;
-        }
-        .btn:hover{
-            background:#000;
-        }
-        select{
-            padding:10px;
-            border:1px solid #ccc;
-            border-radius:8px;
-            min-width:380px;
-        }
-        table{
-            border-collapse:collapse;
-            width:100%;
-        }
-        th,td{
-            border:1px solid #ddd;
-            text-align:center;
-            padding:6px;
-        }
-        th{
-            background:#2563eb;
-            color:#fff;
-            font-size:13px;
-        }
-        .jour{
-            background:#f3f4f6;
-            font-weight:bold;
-            min-width:110px;
-            text-align:left;
-            padding-left:10px;
-        }
-        .cell{
-            width:28px;
-            height:28px;
-            cursor:pointer;
-            border-radius:4px;
-            display:inline-block;
-        }
-        .bloque{
-            background:#ef4444;
-        }
-        .autorise{
-            background:#22c55e;
-        }
-        .legende{
-            margin:15px 0;
-        }
-        .legende span{
-            display:inline-block;
-            margin-right:20px;
-        }
-        .carre{
-            width:16px;
-            height:16px;
-            display:inline-block;
-            vertical-align:middle;
-            margin-right:6px;
-            border-radius:3px;
-        }
+        body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px;}
+        .container{max-width:1400px;margin:auto;}
+        .box{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:25px;}
+        h1,h2{margin-top:0;color:#1f2d3d;}
+        .btn{display:inline-block;background:#111827;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;margin-right:10px;}
+        .btn:hover{background:#000;}
+        select{padding:10px;border:1px solid #ccc;border-radius:8px;min-width:380px;}
+        table{border-collapse:collapse;width:100%;}
+        th,td{border:1px solid #ddd;text-align:center;padding:6px;}
+        th{background:#2563eb;color:#fff;font-size:13px;}
+        .jour{background:#f3f4f6;font-weight:bold;min-width:110px;text-align:left;padding-left:10px;}
+        .cell{width:28px;height:28px;cursor:pointer;border-radius:4px;display:inline-block;}
+        .bloque{background:#ef4444;}
+        .autorise{background:#22c55e;}
+        .legende{margin:15px 0;}
+        .legende span{display:inline-block;margin-right:20px;}
+        .carre{width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;border-radius:3px;}
         .red{background:#ef4444;}
         .green{background:#22c55e;}
-        .actions{
-            margin-top:20px;
-        }
-        button{
-            background:#2563eb;
-            color:#fff;
-            border:none;
-            padding:12px 18px;
-            border-radius:8px;
-            cursor:pointer;
-            margin-right:10px;
-        }
-        button:hover{
-            background:#1d4ed8;
-        }
-        .small{
-            font-size:13px;
-            color:#555;
-        }
-        .liste{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:15px;
-        }
-        .liste th,.liste td{
-            border:1px solid #ddd;
-            padding:10px;
-            text-align:left;
-        }
-        .top-form{
-            margin:15px 0 20px 0;
-        }
+        .actions{margin-top:20px;}
+        button{background:#2563eb;color:#fff;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;margin-right:10px;}
+        button:hover{background:#1d4ed8;}
+        .small{font-size:13px;color:#555;}
+        .liste{width:100%;border-collapse:collapse;margin-top:15px;}
+        .liste th,.liste td{border:1px solid #ddd;padding:10px;text-align:left;}
+        .top-form{margin:15px 0 20px 0;}
     </style>
 </head>
 <body>
@@ -178,10 +82,7 @@ foreach($appareils as $appareil){
 
     <div class="box">
         <h1>Contrôle parental par appareil</h1>
-        <p class="small">
-            Choisis un appareil, puis clique sur les cases horaires.
-            Vert = autorisé, rouge = bloqué.
-        </p>
+        <p class="small">Choisis un appareil, puis clique sur les cases. Vert = autorisé, rouge = bloqué.</p>
 
         <form method="get" class="top-form">
             <label><strong>Appareil à configurer :</strong></label><br><br>
@@ -195,10 +96,7 @@ foreach($appareils as $appareil){
         </form>
 
         <?php if($appareilSelectionne): ?>
-            <p>
-                <strong>Configuration actuelle :</strong>
-                <?= htmlspecialchars(($appareilSelectionne['nom'] ?: 'Appareil').' - '.$appareilSelectionne['ip'].' - '.$appareilSelectionne['mac']) ?>
-            </p>
+            <p><strong>Configuration actuelle :</strong> <?= htmlspecialchars(($appareilSelectionne['nom'] ?: 'Appareil').' - '.$appareilSelectionne['ip'].' - '.$appareilSelectionne['mac']) ?></p>
         <?php endif; ?>
 
         <div class="legende">
@@ -220,7 +118,7 @@ foreach($appareils as $appareil){
                 <?php foreach($jours as $cle => $libelle): ?>
                     <tr>
                         <td class="jour"><?= $libelle ?></td>
-                        <?php for($h=0;$h<24;$h++): 
+                        <?php for($h=0;$h<24;$h++):
                             $bloque = isset($grille[$cle][$h]) ? $grille[$cle][$h] : 0;
                         ?>
                             <td>
@@ -275,21 +173,15 @@ function toggleCell(cell){
         cell.classList.add('bloque');
     }
 }
-
 function toutBloquer(){
-    document.querySelectorAll('.input-hidden').forEach(function(input){
-        input.value = "1";
-    });
+    document.querySelectorAll('.input-hidden').forEach(function(input){input.value="1";});
     document.querySelectorAll('.cell').forEach(function(cell){
         cell.classList.remove('autorise');
         cell.classList.add('bloque');
     });
 }
-
 function toutAutoriser(){
-    document.querySelectorAll('.input-hidden').forEach(function(input){
-        input.value = "0";
-    });
+    document.querySelectorAll('.input-hidden').forEach(function(input){input.value="0";});
     document.querySelectorAll('.cell').forEach(function(cell){
         cell.classList.remove('bloque');
         cell.classList.add('autorise');
