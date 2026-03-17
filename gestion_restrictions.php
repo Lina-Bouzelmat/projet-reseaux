@@ -11,13 +11,18 @@ $jours = [
     "dimanche" => "Dimanche"
 ];
 
-$appareilGlobal = $pdo->query("SELECT id FROM appareils WHERE nom='TOUS_LES_APPAREILS' LIMIT 1")->fetch(PDO::FETCH_ASSOC);
-$appareil_global_id = $appareilGlobal ? (int)$appareilGlobal['id'] : 0;
+$appareils = $pdo->query("SELECT * FROM appareils ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+$appareil_id = isset($_GET['appareil_id']) ? (int)$_GET['appareil_id'] : 0;
+
+if($appareil_id <= 0 && count($appareils) > 0){
+    $appareil_id = (int)$appareils[0]['id'];
+}
 
 $grille = [];
-if($appareil_global_id){
+if($appareil_id > 0){
     $stmt = $pdo->prepare("SELECT jour, heure, bloque FROM grille_horaire WHERE appareil_id = ?");
-    $stmt->execute([$appareil_global_id]);
+    $stmt->execute([$appareil_id]);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach($rows as $row){
@@ -25,7 +30,13 @@ if($appareil_global_id){
     }
 }
 
-$appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREILS' ORDER BY ip ASC")->fetchAll(PDO::FETCH_ASSOC);
+$appareilSelectionne = null;
+foreach($appareils as $appareil){
+    if((int)$appareil['id'] === $appareil_id){
+        $appareilSelectionne = $appareil;
+        break;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -66,8 +77,11 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
         .btn:hover{
             background:#000;
         }
-        .grille{
-            overflow-x:auto;
+        select{
+            padding:10px;
+            border:1px solid #ccc;
+            border-radius:8px;
+            min-width:380px;
         }
         table{
             border-collapse:collapse;
@@ -149,6 +163,9 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
             padding:10px;
             text-align:left;
         }
+        .top-form{
+            margin:15px 0 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -160,12 +177,29 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
     </div>
 
     <div class="box">
-        <h1>Pages horaires</h1>
+        <h1>Contrôle parental par appareil</h1>
         <p class="small">
-            Clique sur une case pour changer l’état :
-            vert = autorisé, rouge = bloqué.
-            Cette première version s’applique à tout le réseau.
+            Choisis un appareil, puis clique sur les cases horaires.
+            Vert = autorisé, rouge = bloqué.
         </p>
+
+        <form method="get" class="top-form">
+            <label><strong>Appareil à configurer :</strong></label><br><br>
+            <select name="appareil_id" onchange="this.form.submit()">
+                <?php foreach($appareils as $appareil): ?>
+                    <option value="<?= (int)$appareil['id'] ?>" <?= ((int)$appareil['id'] === $appareil_id) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars(($appareil['nom'] ?: 'Appareil').' - '.$appareil['ip'].' - '.$appareil['mac']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </form>
+
+        <?php if($appareilSelectionne): ?>
+            <p>
+                <strong>Configuration actuelle :</strong>
+                <?= htmlspecialchars(($appareilSelectionne['nom'] ?: 'Appareil').' - '.$appareilSelectionne['ip'].' - '.$appareilSelectionne['mac']) ?>
+            </p>
+        <?php endif; ?>
 
         <div class="legende">
             <span><span class="carre green"></span>Autorisé</span>
@@ -173,30 +207,30 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
         </div>
 
         <form action="save_restrictions.php" method="post">
-            <div class="grille">
-                <table>
+            <input type="hidden" name="appareil_id" value="<?= (int)$appareil_id ?>">
+
+            <table>
+                <tr>
+                    <th>Jour</th>
+                    <?php for($h=0;$h<24;$h++): ?>
+                        <th><?= $h ?></th>
+                    <?php endfor; ?>
+                </tr>
+
+                <?php foreach($jours as $cle => $libelle): ?>
                     <tr>
-                        <th>Jour</th>
-                        <?php for($h=0;$h<24;$h++): ?>
-                            <th><?= $h ?></th>
+                        <td class="jour"><?= $libelle ?></td>
+                        <?php for($h=0;$h<24;$h++): 
+                            $bloque = isset($grille[$cle][$h]) ? $grille[$cle][$h] : 0;
+                        ?>
+                            <td>
+                                <input type="hidden" name="grille[<?= $cle ?>][<?= $h ?>]" value="<?= $bloque ?>" class="input-hidden">
+                                <div class="cell <?= $bloque ? 'bloque' : 'autorise' ?>" onclick="toggleCell(this)"></div>
+                            </td>
                         <?php endfor; ?>
                     </tr>
-
-                    <?php foreach($jours as $cle => $libelle): ?>
-                        <tr>
-                            <td class="jour"><?= $libelle ?></td>
-                            <?php for($h=0;$h<24;$h++): 
-                                $bloque = isset($grille[$cle][$h]) ? $grille[$cle][$h] : 0;
-                            ?>
-                                <td>
-                                    <input type="hidden" name="grille[<?= $cle ?>][<?= $h ?>]" value="<?= $bloque ?>" class="input-hidden">
-                                    <div class="cell <?= $bloque ? 'bloque' : 'autorise' ?>" onclick="toggleCell(this)"></div>
-                                </td>
-                            <?php endfor; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                </table>
-            </div>
+                <?php endforeach; ?>
+            </table>
 
             <div class="actions">
                 <button type="submit">Enregistrer la grille</button>
@@ -207,27 +241,23 @@ $appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREI
     </div>
 
     <div class="box">
-        <h2>Appareils connectés à la box</h2>
-        <?php if(count($appareils) > 0): ?>
-            <table class="liste">
+        <h2>Appareils détectés sur la box</h2>
+        <table class="liste">
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>IP</th>
+                <th>MAC</th>
+            </tr>
+            <?php foreach($appareils as $appareil): ?>
                 <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>IP</th>
-                    <th>MAC</th>
+                    <td><?= htmlspecialchars($appareil['id']) ?></td>
+                    <td><?= htmlspecialchars($appareil['nom'] ? $appareil['nom'] : 'Appareil') ?></td>
+                    <td><?= htmlspecialchars($appareil['ip']) ?></td>
+                    <td><?= htmlspecialchars($appareil['mac']) ?></td>
                 </tr>
-                <?php foreach($appareils as $appareil): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($appareil['id']) ?></td>
-                        <td><?= htmlspecialchars($appareil['nom'] ? $appareil['nom'] : 'Appareil') ?></td>
-                        <td><?= htmlspecialchars($appareil['ip']) ?></td>
-                        <td><?= htmlspecialchars($appareil['mac']) ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </table>
-        <?php else: ?>
-            <p>Aucun appareil détecté.</p>
-        <?php endif; ?>
+            <?php endforeach; ?>
+        </table>
     </div>
 
 </div>
