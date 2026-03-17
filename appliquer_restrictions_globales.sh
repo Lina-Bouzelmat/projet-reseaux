@@ -14,7 +14,7 @@ case "$jour_en" in
     *) exit 0 ;;
 esac
 
-resultat=$(mysql -u root -p'TON_MDP_MYSQL' natbox_db -N -e "
+resultat=$(mysql -u root -p'root' natbox_db -N -e "
 SELECT r.actif, r.heure_debut, r.heure_fin
 FROM regles_parentales r
 JOIN appareils a ON r.appareil_id = a.id
