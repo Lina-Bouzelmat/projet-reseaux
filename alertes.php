@@ -6,7 +6,12 @@ if(file_exists($fichier)){
     $contenu = file($fichier, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach($contenu as $index => $ligne){
         if($index === 0) continue;
-        $lignes[] = explode(";", $ligne);
+
+        $colonnes = explode(";", $ligne);
+
+        if(count($colonnes) >= 9 && trim($colonnes[8]) !== ""){
+            $lignes[] = $colonnes;
+        }
     }
 }
 ?>
@@ -23,38 +28,44 @@ if(file_exists($fichier)){
         th{background:#2563eb;color:#fff;}
         .alerte{color:#b91c1c;font-weight:bold;}
         a{display:inline-block;margin-bottom:20px;text-decoration:none;background:#111827;color:white;padding:10px 14px;border-radius:8px;}
+        .vide{color:#666;font-style:italic;}
     </style>
 </head>
 <body>
     <a href="index.php">Accueil</a>
     <div class="box">
-        <h1>Alertes et logs NATBOX</h1>
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Appareil</th>
-                <th>IP</th>
-                <th>MAC</th>
-                <th>Jour</th>
-                <th>Heure</th>
-                <th>Etat</th>
-                <th>Débit</th>
-                <th>Alerte</th>
-            </tr>
-            <?php foreach($lignes as $ligne): ?>
+        <h1>Alertes NATBOX</h1>
+
+        <?php if(count($lignes) > 0): ?>
+            <table>
                 <tr>
-                    <td><?= htmlspecialchars($ligne[0]) ?></td>
-                    <td><?= htmlspecialchars($ligne[1]) ?></td>
-                    <td><?= htmlspecialchars($ligne[2]) ?></td>
-                    <td><?= htmlspecialchars($ligne[3]) ?></td>
-                    <td><?= htmlspecialchars($ligne[4]) ?></td>
-                    <td><?= htmlspecialchars($ligne[5]) ?>h</td>
-                    <td><?= htmlspecialchars($ligne[6]) ?></td>
-                    <td><?= htmlspecialchars($ligne[7]) ?> Mbps</td>
-                    <td class="alerte"><?= htmlspecialchars($ligne[8]) ?></td>
+                    <th>Date</th>
+                    <th>Appareil</th>
+                    <th>IP</th>
+                    <th>MAC</th>
+                    <th>Jour</th>
+                    <th>Heure</th>
+                    <th>Etat</th>
+                    <th>Débit</th>
+                    <th>Alerte</th>
                 </tr>
-            <?php endforeach; ?>
-        </table>
+                <?php foreach($lignes as $ligne): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($ligne[0]) ?></td>
+                        <td><?= htmlspecialchars($ligne[1]) ?></td>
+                        <td><?= htmlspecialchars($ligne[2]) ?></td>
+                        <td><?= htmlspecialchars($ligne[3]) ?></td>
+                        <td><?= htmlspecialchars($ligne[4]) ?></td>
+                        <td><?= htmlspecialchars($ligne[5]) ?>h</td>
+                        <td><?= htmlspecialchars($ligne[6]) ?></td>
+                        <td><?= htmlspecialchars($ligne[7]) ?> Mbps</td>
+                        <td class="alerte"><?= htmlspecialchars($ligne[8]) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        <?php else: ?>
+            <p class="vide">Aucune alerte détectée pour le moment.</p>
+        <?php endif; ?>
     </div>
 </body>
 </html>
