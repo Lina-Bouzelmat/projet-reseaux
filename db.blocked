@@ -1,0 +1,11 @@
+$TTL 86400
+@   IN  SOA ns.blocked.local. admin.blocked.local. (
+        2
+        604800
+        86400
+        2419200
+        86400 )
+
+@       IN  NS      ns.blocked.local.
+@       IN  A       127.0.0.1
+*       IN  A       127.0.0.1
