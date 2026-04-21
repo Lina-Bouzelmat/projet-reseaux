@@ -1,92 +1,35 @@
-<?php
-require_once("db_natbox.php");
-
-$jours = [
-    "lundi" => "Lundi",
-    "mardi" => "Mardi",
-    "mercredi" => "Mercredi",
-    "jeudi" => "Jeudi",
-    "vendredi" => "Vendredi",
-    "samedi" => "Samedi",
-    "dimanche" => "Dimanche"
-];
-
-$appareils = $pdo->query("SELECT * FROM appareils ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
-
-$appareil_id = isset($_GET['appareil_id']) ? (int)$_GET['appareil_id'] : 0;
-
-if($appareil_id <= 0 && count($appareils) > 0){
-    $appareil_id = (int)$appareils[0]['id'];
-}
-
-$grille = [];
-if($appareil_id > 0){
-    $stmt = $pdo->prepare("SELECT jour, heure, bloque FROM grille_horaire WHERE appareil_id = ?");
-    $stmt->execute([$appareil_id]);
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    foreach($rows as $row){
-        $grille[$row['jour']][(int)$row['heure']] = (int)$row['bloque'];
-    }
-}
-
-$appareilSelectionne = null;
-foreach($appareils as $appareil){
-    if((int)$appareil['id'] === $appareil_id){
-        $appareilSelectionne = $appareil;
-        break;
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Gestion des restrictions NATBOX</title>
-    <style>
-        body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px;}
-        .container{max-width:1400px;margin:auto;}
-        .box{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:25px;}
-        h1,h2{margin-top:0;color:#1f2d3d;}
-        .btn{display:inline-block;background:#111827;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;margin-right:10px;}
-        .btn:hover{background:#000;}
-        select{padding:10px;border:1px solid #ccc;border-radius:8px;min-width:380px;}
-        table{border-collapse:collapse;width:100%;}
-        th,td{border:1px solid #ddd;text-align:center;padding:6px;}
-        th{background:#2563eb;color:#fff;font-size:13px;}
-        .jour{background:#f3f4f6;font-weight:bold;min-width:110px;text-align:left;padding-left:10px;}
-        .cell{width:28px;height:28px;cursor:pointer;border-radius:4px;display:inline-block;}
-        .bloque{background:#ef4444;}
-        .autorise{background:#22c55e;}
-        .legende{margin:15px 0;}
-        .legende span{display:inline-block;margin-right:20px;}
-        .carre{width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;border-radius:3px;}
-        .red{background:#ef4444;}
-        .green{background:#22c55e;}
-        .actions{margin-top:20px;}
-        button{background:#2563eb;color:#fff;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;margin-right:10px;}
-        button:hover{background:#1d4ed8;}
-        .small{font-size:13px;color:#555;}
-        .liste{width:100%;border-collapse:collapse;margin-top:15px;}
-        .liste th,.liste td{border:1px solid #ddd;padding:10px;text-align:left;}
-        .top-form{margin:15px 0 20px 0;}
-    </style>
+    <title>Contrôle parental - CeriFAI</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<?php include 'menu.php'; ?>
+
 <div class="container">
 
-    <div class="box">
-        <a class="btn" href="index.php">Accueil</a>
-        <a class="btn" href="menu.php">Menu</a>
-    </div>
+    <div class="card">
+        <div class="page-header">
+            <div>
+                <h1>Contrôle parental par appareil</h1>
+                <p class="subtitle">
+                    Choisis un appareil, puis clique sur les cases horaires.
+                    <strong>Vert</strong> = autorisé, <strong>rouge</strong> = bloqué.
+                </p>
+            </div>
+        </div>
 
-    <div class="box">
-        <h1>Contrôle parental par appareil</h1>
-        <p class="small">Choisis un appareil, puis clique sur les cases. Vert = autorisé, rouge = bloqué.</p>
+        <div class="top-actions">
+            <a href="index.php" class="btn-small">Accueil</a>
+            <a href="controle.php" class="btn-small">Retour au menu contrôle</a>
+        </div>
 
-        <form method="get" class="top-form">
-            <label><strong>Appareil à configurer :</strong></label><br><br>
-            <select name="appareil_id" onchange="this.form.submit()">
+        <form method="get" style="margin-top:25px;">
+            <label for="appareil_id">Appareil à configurer :</label>
+            <select name="appareil_id" id="appareil_id" onchange="this.form.submit()">
                 <?php foreach($appareils as $appareil): ?>
                     <option value="<?= (int)$appareil['id'] ?>" <?= ((int)$appareil['id'] === $appareil_id) ? 'selected' : '' ?>>
                         <?= htmlspecialchars(($appareil['nom'] ?: 'Appareil').' - '.$appareil['ip'].' - '.$appareil['mac']) ?>
@@ -96,64 +39,98 @@ foreach($appareils as $appareil){
         </form>
 
         <?php if($appareilSelectionne): ?>
-            <p><strong>Configuration actuelle :</strong> <?= htmlspecialchars(($appareilSelectionne['nom'] ?: 'Appareil').' - '.$appareilSelectionne['ip'].' - '.$appareilSelectionne['mac']) ?></p>
+        <div class="info-box">
+            <div class="info-item">
+                <strong>Nom</strong>
+                <?= htmlspecialchars($appareilSelectionne['nom'] ?: 'Appareil') ?>
+            </div>
+            <div class="info-item">
+                <strong>Adresse IP</strong>
+                <?= htmlspecialchars($appareilSelectionne['ip']) ?>
+            </div>
+            <div class="info-item">
+                <strong>Adresse MAC</strong>
+                <?= htmlspecialchars($appareilSelectionne['mac']) ?>
+            </div>
+        </div>
         <?php endif; ?>
 
-        <div class="legende">
-            <span><span class="carre green"></span>Autorisé</span>
-            <span><span class="carre red"></span>Bloqué</span>
+        <div class="legend-box">
+            <div class="legend-item">
+                <span class="legend-color legend-green"></span>
+                <span>Autorisé</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color legend-red"></span>
+                <span>Bloqué</span>
+            </div>
         </div>
 
         <form action="save_restrictions.php" method="post">
             <input type="hidden" name="appareil_id" value="<?= (int)$appareil_id ?>">
 
-            <table>
-                <tr>
-                    <th>Jour</th>
-                    <?php for($h=0;$h<24;$h++): ?>
-                        <th><?= $h ?></th>
-                    <?php endfor; ?>
-                </tr>
-
-                <?php foreach($jours as $cle => $libelle): ?>
+            <div class="grid-wrapper">
+                <table class="grid-table">
                     <tr>
-                        <td class="jour"><?= $libelle ?></td>
-                        <?php for($h=0;$h<24;$h++):
-                            $bloque = isset($grille[$cle][$h]) ? $grille[$cle][$h] : 0;
+                        <th>Jour</th>
+                        <?php for($h=0; $h<24; $h++): ?>
+                            <th><?= $h ?></th>
+                        <?php endfor; ?>
+                    </tr>
+
+                    <?php foreach($jours as $jour): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($jour) ?></td>
+
+                        <?php for($h=0; $h<24; $h++): 
+                            $cle = $jour . '_' . $h;
+                            $etat = isset($grille[$jour][$h]) ? (int)$grille[$jour][$h] : 1;
                         ?>
                             <td>
-                                <input type="hidden" name="grille[<?= $cle ?>][<?= $h ?>]" value="<?= $bloque ?>" class="input-hidden">
-                                <div class="cell <?= $bloque ? 'bloque' : 'autorise' ?>" onclick="toggleCell(this)"></div>
+                                <input
+                                    type="hidden"
+                                    name="cases[<?= htmlspecialchars($jour) ?>][<?= $h ?>]"
+                                    value="<?= $etat ?>"
+                                    class="state-input"
+                                >
+
+                                <button
+                                    type="button"
+                                    class="slot <?= $etat ? 'allowed' : 'blocked' ?>"
+                                    onclick="toggleSlot(this)">
+                                </button>
                             </td>
                         <?php endfor; ?>
                     </tr>
-                <?php endforeach; ?>
-            </table>
+                    <?php endforeach; ?>
+                </table>
+            </div>
 
-            <div class="actions">
+            <div class="actions-row">
                 <button type="submit">Enregistrer la grille</button>
-                <button type="button" onclick="toutAutoriser()">Tout autoriser</button>
-                <button type="button" onclick="toutBloquer()">Tout bloquer</button>
+                <button type="button" onclick="setAllSlots(1)">Tout autoriser</button>
+                <button type="button" onclick="setAllSlots(0)">Tout bloquer</button>
             </div>
         </form>
     </div>
 
-    <div class="box">
-        <h2>Appareils détectés sur la box</h2>
-        <table class="liste">
+    <div class="card table-card">
+        <h2 class="section-title">Appareils détectés sur la box</h2>
+        <table>
             <tr>
                 <th>ID</th>
                 <th>Nom</th>
                 <th>IP</th>
                 <th>MAC</th>
             </tr>
+
             <?php foreach($appareils as $appareil): ?>
-                <tr>
-                    <td><?= htmlspecialchars($appareil['id']) ?></td>
-                    <td><?= htmlspecialchars($appareil['nom'] ? $appareil['nom'] : 'Appareil') ?></td>
-                    <td><?= htmlspecialchars($appareil['ip']) ?></td>
-                    <td><?= htmlspecialchars($appareil['mac']) ?></td>
-                </tr>
+            <tr>
+                <td><?= (int)$appareil['id'] ?></td>
+                <td><?= htmlspecialchars($appareil['nom']) ?></td>
+                <td><?= htmlspecialchars($appareil['ip']) ?></td>
+                <td><?= htmlspecialchars($appareil['mac']) ?></td>
+            </tr>
             <?php endforeach; ?>
         </table>
     </div>
@@ -161,32 +138,35 @@ foreach($appareils as $appareil){
 </div>
 
 <script>
-function toggleCell(cell){
-    const input = cell.parentElement.querySelector('.input-hidden');
-    if(input.value === "1"){
-        input.value = "0";
-        cell.classList.remove('bloque');
-        cell.classList.add('autorise');
-    }else{
-        input.value = "1";
-        cell.classList.remove('autorise');
-        cell.classList.add('bloque');
+function toggleSlot(button){
+    var input = button.parentElement.querySelector('.state-input');
+    var current = parseInt(input.value);
+
+    if(current === 1){
+        input.value = 0;
+        button.classList.remove('allowed');
+        button.classList.add('blocked');
+    } else {
+        input.value = 1;
+        button.classList.remove('blocked');
+        button.classList.add('allowed');
     }
 }
-function toutBloquer(){
-    document.querySelectorAll('.input-hidden').forEach(function(input){input.value="1";});
-    document.querySelectorAll('.cell').forEach(function(cell){
-        cell.classList.remove('autorise');
-        cell.classList.add('bloque');
+
+function setAllSlots(state){
+    var inputs = document.querySelectorAll('.state-input');
+    var buttons = document.querySelectorAll('.slot');
+
+    inputs.forEach(function(input){
+        input.value = state;
     });
-}
-function toutAutoriser(){
-    document.querySelectorAll('.input-hidden').forEach(function(input){input.value="0";});
-    document.querySelectorAll('.cell').forEach(function(cell){
-        cell.classList.remove('bloque');
-        cell.classList.add('autorise');
+
+    buttons.forEach(function(button){
+        button.classList.remove('allowed', 'blocked');
+        button.classList.add(state === 1 ? 'allowed' : 'blocked');
     });
 }
 </script>
+
 </body>
 </html>
