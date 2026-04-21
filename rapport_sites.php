@@ -18,32 +18,26 @@ if(file_exists($rapportFile)){
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Rapport journalier des sites</title>
-    <style>
-        body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px;}
-        .container{max-width:1100px;margin:auto;}
-        .box{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
-        h1{color:#1f2d3d;}
-        table{width:100%;border-collapse:collapse;margin-top:20px;}
-        th,td{border:1px solid #ddd;padding:10px;text-align:left;}
-        th{background:#2563eb;color:#fff;}
-        tr:nth-child(even){background:#f9fafb;}
-        .vide{color:#777;font-style:italic;}
-    </style>
+<meta charset="UTF-8">
+<title>Rapport journalier – LinaFAI</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <div class="box">
-        <h1>Rapport journalier des sites les plus consommateurs</h1>
 
+<?php include 'menu.php'; ?>
+
+<div class="container">
+
+    <h1>Rapport journalier des sites les plus consommateurs</h1>
+
+    <div class="card">
         <?php if(count($lignes) > 0): ?>
             <table>
                 <tr>
                     <th>Site</th>
                     <th>Nb connexions</th>
-                    <th>Débit total (Mbps)</th>
-                    <th>Débit moyen (Mbps)</th>
+                    <th>Débit total estimé (Mbps)</th>
+                    <th>Débit moyen estimé (Mbps)</th>
                 </tr>
                 <?php foreach($lignes as $ligne): ?>
                     <tr>
@@ -55,9 +49,15 @@ if(file_exists($rapportFile)){
                 <?php endforeach; ?>
             </table>
         <?php else: ?>
-            <p class="vide">Aucune donnée de rapport disponible pour le moment.</p>
+            <p>Aucune donnée disponible pour le moment.</p>
         <?php endif; ?>
     </div>
+
 </div>
+
+<div class="footer">
+    LinaFAI – Rapport journalier
+</div>
+
 </body>
 </html>
