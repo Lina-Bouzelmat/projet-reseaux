@@ -1,223 +1,196 @@
+<?php
+require_once("db_natbox.php");
+
+$jours = [
+    "lundi" => "Lundi",
+    "mardi" => "Mardi",
+    "mercredi" => "Mercredi",
+    "jeudi" => "Jeudi",
+    "vendredi" => "Vendredi",
+    "samedi" => "Samedi",
+    "dimanche" => "Dimanche"
+];
+
+$appareilGlobal = $pdo->query("SELECT id FROM appareils WHERE nom='TOUS_LES_APPAREILS' LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+$appareil_global_id = $appareilGlobal ? (int)$appareilGlobal['id'] : 0;
+
+$grille = [];
+if($appareil_global_id){
+    $stmt = $pdo->prepare("SELECT jour, heure, bloque FROM grille_horaire WHERE appareil_id = ?");
+    $stmt->execute([$appareil_global_id]);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach($rows as $row){
+        $grille[$row['jour']][(int)$row['heure']] = (int)$row['bloque'];
+    }
+}
+
+$appareils = $pdo->query("SELECT * FROM appareils WHERE nom <> 'TOUS_LES_APPAREILS' ORDER BY ip ASC")->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Contrôle parental - LinaFAI</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Gestion des restrictions NATBOX</title>
     <style>
-        .page-title{
-            margin-bottom:10px;
+        body{
+            font-family:Arial,sans-serif;
+            background:#f4f6f9;
+            margin:0;
+            padding:20px;
         }
-
-        .page-subtitle{
-            color:#bdbdbd;
-            line-height:1.6;
-            margin-bottom:20px;
+        .container{
+            max-width:1400px;
+            margin:auto;
         }
-
-        .config-card{
+        .box{
+            background:#fff;
+            padding:20px;
+            border-radius:12px;
+            box-shadow:0 2px 8px rgba(0,0,0,.08);
             margin-bottom:25px;
         }
-
-        .config-current{
-            margin-top:18px;
-            padding:14px 16px;
-            background:#111;
-            border:1px solid #2a2a2a;
-            border-radius:10px;
-            color:#ddd;
+        h1,h2{
+            margin-top:0;
+            color:#1f2d3d;
         }
-
-        .config-current strong{
-            color:#3ddc84;
+        .btn{
+            display:inline-block;
+            background:#111827;
+            color:#fff;
+            padding:10px 14px;
+            border-radius:8px;
+            text-decoration:none;
+            margin-right:10px;
         }
-
-        .device-select{
-            max-width:460px;
+        .btn:hover{
+            background:#000;
         }
-
-        .legend-box{
-            display:flex;
-            gap:20px;
-            flex-wrap:wrap;
-            margin:20px 0 10px 0;
+        .grille{
+            overflow-x:auto;
         }
-
-        .legend-item{
-            display:flex;
-            align-items:center;
-            gap:8px;
-            color:#ddd;
+        table{
+            border-collapse:collapse;
+            width:100%;
         }
-
-        .legend-color{
-            width:16px;
-            height:16px;
+        th,td{
+            border:1px solid #ddd;
+            text-align:center;
+            padding:6px;
+        }
+        th{
+            background:#2563eb;
+            color:#fff;
+            font-size:13px;
+        }
+        .jour{
+            background:#f3f4f6;
+            font-weight:bold;
+            min-width:110px;
+            text-align:left;
+            padding-left:10px;
+        }
+        .cell{
+            width:28px;
+            height:28px;
+            cursor:pointer;
             border-radius:4px;
             display:inline-block;
         }
-
-        .legend-green{
-            background:#2fbf73;
-        }
-
-        .legend-red{
+        .bloque{
             background:#ef4444;
         }
-
-        .grid-wrapper{
-            overflow-x:auto;
+        .autorise{
+            background:#22c55e;
+        }
+        .legende{
+            margin:15px 0;
+        }
+        .legende span{
+            display:inline-block;
+            margin-right:20px;
+        }
+        .carre{
+            width:16px;
+            height:16px;
+            display:inline-block;
+            vertical-align:middle;
+            margin-right:6px;
+            border-radius:3px;
+        }
+        .red{background:#ef4444;}
+        .green{background:#22c55e;}
+        .actions{
             margin-top:20px;
-            border:1px solid #2a2a2a;
-            border-radius:12px;
-            background:#111;
         }
-
-        .grid-table{
-            width:100%;
-            min-width:1100px;
-            border-collapse:collapse;
-            margin-top:0;
-        }
-
-        .grid-table th{
+        button{
             background:#2563eb;
             color:#fff;
-            padding:10px;
-            border:1px solid #2a2a2a;
-            font-size:13px;
-            text-align:center;
-        }
-
-        .grid-table td{
-            padding:8px;
-            border:1px solid #2a2a2a;
-            text-align:center;
-            background:#0f0f0f;
-        }
-
-        .grid-table td:first-child{
-            text-align:left;
-            font-weight:bold;
-            color:#fff;
-            background:#151515;
-            white-space:nowrap;
-        }
-
-        .slot{
-            width:22px;
-            height:22px;
             border:none;
-            border-radius:5px;
-            cursor:pointer;
-            display:inline-block;
-            padding:0;
-            margin:0;
-        }
-
-        .slot.allowed{
-            background:#2fbf73;
-        }
-
-        .slot.blocked{
-            background:#ef4444;
-        }
-
-        .actions-row{
-            display:flex;
-            gap:12px;
-            flex-wrap:wrap;
-            margin-top:20px;
-        }
-
-        .actions-row button{
-            width:auto;
             padding:12px 18px;
+            border-radius:8px;
+            cursor:pointer;
+            margin-right:10px;
         }
-
-        .table-card{
-            margin-top:25px;
+        button:hover{
+            background:#1d4ed8;
         }
-
-        .table-card h2{
-            margin-bottom:15px;
+        .small{
+            font-size:13px;
+            color:#555;
+        }
+        .liste{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:15px;
+        }
+        .liste th,.liste td{
+            border:1px solid #ddd;
+            padding:10px;
+            text-align:left;
         }
     </style>
 </head>
 <body>
-
-<?php include 'menu.php'; ?>
-
 <div class="container">
 
-    <div class="card config-card">
-        <h1 class="page-title">Contrôle parental par appareil</h1>
-        <p class="page-subtitle">
-            Choisis un appareil, puis clique sur les cases horaires.
-            Vert = autorisé, rouge = bloqué.
+    <div class="box">
+        <a class="btn" href="index.php">Accueil</a>
+        <a class="btn" href="menu.php">Menu</a>
+    </div>
+
+    <div class="box">
+        <h1>Pages horaires</h1>
+        <p class="small">
+            Clique sur une case pour changer l’état :
+            vert = autorisé, rouge = bloqué.
+            Cette première version s’applique à tout le réseau.
         </p>
 
-        <form method="get">
-            <label for="appareil_id">Appareil à configurer :</label>
-            <select name="appareil_id" id="appareil_id" class="device-select" onchange="this.form.submit()">
-                <?php foreach($appareils as $appareil): ?>
-                    <option value="<?= (int)$appareil['id'] ?>" <?= ((int)$appareil['id'] === $appareil_id) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars(($appareil['nom'] ?: 'Appareil').' - '.$appareil['ip'].' - '.$appareil['mac']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </form>
-
-        <?php if($appareilSelectionne): ?>
-            <div class="config-current">
-                <strong>Configuration actuelle :</strong>
-                <?= htmlspecialchars(($appareilSelectionne['nom'] ?: 'Appareil').' - '.$appareilSelectionne['ip'].' - '.$appareilSelectionne['mac']) ?>
-            </div>
-        <?php endif; ?>
-
-        <div class="legend-box">
-            <div class="legend-item">
-                <span class="legend-color legend-green"></span>
-                <span>Autorisé</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-color legend-red"></span>
-                <span>Bloqué</span>
-            </div>
+        <div class="legende">
+            <span><span class="carre green"></span>Autorisé</span>
+            <span><span class="carre red"></span>Bloqué</span>
         </div>
 
         <form action="save_restrictions.php" method="post">
-            <input type="hidden" name="appareil_id" value="<?= (int)$appareil_id ?>">
-
-            <div class="grid-wrapper">
-                <table class="grid-table">
+            <div class="grille">
+                <table>
                     <tr>
                         <th>Jour</th>
-                        <?php for($h = 0; $h < 24; $h++): ?>
+                        <?php for($h=0;$h<24;$h++): ?>
                             <th><?= $h ?></th>
                         <?php endfor; ?>
                     </tr>
 
-                    <?php foreach($jours as $jourCle => $jourLabel): ?>
+                    <?php foreach($jours as $cle => $libelle): ?>
                         <tr>
-                            <td><?= htmlspecialchars($jourLabel) ?></td>
-
-                            <?php for($h = 0; $h < 24; $h++): 
-                                $etat = isset($grille[$jourCle][$h]) ? (int)$grille[$jourCle][$h] : 1;
+                            <td class="jour"><?= $libelle ?></td>
+                            <?php for($h=0;$h<24;$h++): 
+                                $bloque = isset($grille[$cle][$h]) ? $grille[$cle][$h] : 0;
                             ?>
                                 <td>
-                                    <input
-                                        type="hidden"
-                                        name="cases[<?= htmlspecialchars($jourCle) ?>][<?= $h ?>]"
-                                        value="<?= $etat ?>"
-                                        class="state-input"
-                                    >
-
-                                    <button
-                                        type="button"
-                                        class="slot <?= $etat == 1 ? 'allowed' : 'blocked' ?>"
-                                        onclick="toggleSlot(this)">
-                                    </button>
+                                    <input type="hidden" name="grille[<?= $cle ?>][<?= $h ?>]" value="<?= $bloque ?>" class="input-hidden">
+                                    <div class="cell <?= $bloque ? 'bloque' : 'autorise' ?>" onclick="toggleCell(this)"></div>
                                 </td>
                             <?php endfor; ?>
                         </tr>
@@ -225,30 +198,28 @@
                 </table>
             </div>
 
-            <div class="actions-row">
+            <div class="actions">
                 <button type="submit">Enregistrer la grille</button>
-                <button type="button" onclick="setAllSlots(1)">Tout autoriser</button>
-                <button type="button" onclick="setAllSlots(0)">Tout bloquer</button>
+                <button type="button" onclick="toutAutoriser()">Tout autoriser</button>
+                <button type="button" onclick="toutBloquer()">Tout bloquer</button>
             </div>
         </form>
     </div>
 
-    <div class="card table-card">
-        <h2>Appareils détectés sur la box</h2>
-
+    <div class="box">
+        <h2>Appareils connectés à la box</h2>
         <?php if(count($appareils) > 0): ?>
-            <table>
+            <table class="liste">
                 <tr>
                     <th>ID</th>
                     <th>Nom</th>
                     <th>IP</th>
                     <th>MAC</th>
                 </tr>
-
                 <?php foreach($appareils as $appareil): ?>
                     <tr>
-                        <td><?= (int)$appareil['id'] ?></td>
-                        <td><?= htmlspecialchars($appareil['nom'] ?: 'Appareil') ?></td>
+                        <td><?= htmlspecialchars($appareil['id']) ?></td>
+                        <td><?= htmlspecialchars($appareil['nom'] ? $appareil['nom'] : 'Appareil') ?></td>
                         <td><?= htmlspecialchars($appareil['ip']) ?></td>
                         <td><?= htmlspecialchars($appareil['mac']) ?></td>
                     </tr>
@@ -261,40 +232,39 @@
 
 </div>
 
-<div class="footer">
-    LinaFAI – Espace de contrôle parental
-</div>
-
 <script>
-function toggleSlot(button){
-    var input = button.parentElement.querySelector('.state-input');
-    var current = parseInt(input.value);
-
-    if(current === 1){
-        input.value = 0;
-        button.classList.remove('allowed');
-        button.classList.add('blocked');
-    } else {
-        input.value = 1;
-        button.classList.remove('blocked');
-        button.classList.add('allowed');
+function toggleCell(cell){
+    const input = cell.parentElement.querySelector('.input-hidden');
+    if(input.value === "1"){
+        input.value = "0";
+        cell.classList.remove('bloque');
+        cell.classList.add('autorise');
+    }else{
+        input.value = "1";
+        cell.classList.remove('autorise');
+        cell.classList.add('bloque');
     }
 }
 
-function setAllSlots(state){
-    var inputs = document.querySelectorAll('.state-input');
-    var buttons = document.querySelectorAll('.slot');
-
-    inputs.forEach(function(input){
-        input.value = state;
+function toutBloquer(){
+    document.querySelectorAll('.input-hidden').forEach(function(input){
+        input.value = "1";
     });
+    document.querySelectorAll('.cell').forEach(function(cell){
+        cell.classList.remove('autorise');
+        cell.classList.add('bloque');
+    });
+}
 
-    buttons.forEach(function(button){
-        button.classList.remove('allowed', 'blocked');
-        button.classList.add(state === 1 ? 'allowed' : 'blocked');
+function toutAutoriser(){
+    document.querySelectorAll('.input-hidden').forEach(function(input){
+        input.value = "0";
+    });
+    document.querySelectorAll('.cell').forEach(function(cell){
+        cell.classList.remove('bloque');
+        cell.classList.add('autorise');
     });
 }
 </script>
-
 </body>
 </html>
