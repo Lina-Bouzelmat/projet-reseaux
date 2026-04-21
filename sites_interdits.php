@@ -26,22 +26,21 @@ $sites = $pdo->query("SELECT * FROM sites_interdits ORDER BY domaine ASC")->fetc
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Sites interdits NATBOX</title>
-    <style>
-        body{font-family:Arial,sans-serif;background:#f4f6f9;padding:30px;}
-        .box{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:20px;}
-        input{width:100%;padding:10px;margin-top:8px;margin-bottom:12px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box;}
-        button{background:#2563eb;color:white;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;}
-        table{width:100%;border-collapse:collapse;margin-top:15px;}
-        th,td{border:1px solid #ddd;padding:10px;text-align:left;}
-        th{background:#2563eb;color:white;}
-        a{color:#b91c1c;text-decoration:none;}
-    </style>
+<meta charset="UTF-8">
+<title>Sites interdits – LinaFAI</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="box">
-        <h1>Sites interdits</h1>
+
+<?php include 'menu.php'; ?>
+
+<div class="container">
+
+    <h1>Sites interdits</h1>
+
+    <div class="card">
+        <h2>Ajouter un site</h2>
+
         <form method="post">
             <label>Domaine</label>
             <input type="text" name="domaine" placeholder="facebook.com" required>
@@ -53,8 +52,9 @@ $sites = $pdo->query("SELECT * FROM sites_interdits ORDER BY domaine ASC")->fetc
         </form>
     </div>
 
-    <div class="box">
+    <div class="card">
         <h2>Liste actuelle</h2>
+
         <table>
             <tr>
                 <th>ID</th>
@@ -69,10 +69,19 @@ $sites = $pdo->query("SELECT * FROM sites_interdits ORDER BY domaine ASC")->fetc
                     <td><?= htmlspecialchars($site['domaine']) ?></td>
                     <td><?= htmlspecialchars($site['categorie']) ?></td>
                     <td><?= $site['actif'] ? 'Oui' : 'Non' ?></td>
-                    <td><a href="?delete=<?= $site['id'] ?>" onclick="return confirm('Supprimer ce site ?')">Supprimer</a></td>
+                    <td>
+                        <a href="?delete=<?= $site['id'] ?>" onclick="return confirm('Supprimer ce site ?')">Supprimer</a>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </table>
     </div>
+
+</div>
+
+<div class="footer">
+    LinaFAI – Gestion des sites interdits
+</div>
+
 </body>
 </html>
