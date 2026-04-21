@@ -1,73 +1,3 @@
-<?php
-require_once("db_natbox.php");
-
-$appareils = [];
-$grille = [];
-$appareil_id = 0;
-$appareilSelectionne = null;
-
-$jours = [
-    "lundi" => "Lundi",
-    "mardi" => "Mardi",
-    "mercredi" => "Mercredi",
-    "jeudi" => "Jeudi",
-    "vendredi" => "Vendredi",
-    "samedi" => "Samedi",
-    "dimanche" => "Dimanche"
-];
-
-try{
-    $stmtAppareils = $pdo->query("
-        SELECT *
-        FROM appareils
-        WHERE mac <> '00:00:00:00:00:00'
-        ORDER BY nom ASC, ip ASC
-    ");
-    $appareils = $stmtAppareils->fetchAll(PDO::FETCH_ASSOC);
-
-    if(isset($_GET['appareil_id']) && !empty($_GET['appareil_id'])){
-        $appareil_id = (int)$_GET['appareil_id'];
-    } elseif(count($appareils) > 0){
-        $appareil_id = (int)$appareils[0]['id'];
-    }
-
-    foreach($appareils as $appareil){
-        if((int)$appareil['id'] === $appareil_id){
-            $appareilSelectionne = $appareil;
-            break;
-        }
-    }
-
-    foreach(array_keys($jours) as $jour){
-        for($h = 0; $h < 24; $h++){
-            $grille[$jour][$h] = 1;
-        }
-    }
-
-    if($appareil_id > 0){
-        $stmtGrille = $pdo->prepare("
-            SELECT jour, heure, bloque
-            FROM grille_horaires
-            WHERE appareil_id = ?
-        ");
-        $stmtGrille->execute([$appareil_id]);
-        $resultats = $stmtGrille->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach($resultats as $ligne){
-            $jour = $ligne['jour'];
-            $heure = (int)$ligne['heure'];
-            $bloque = (int)$ligne['bloque'];
-
-            if(isset($grille[$jour][$heure])){
-                $grille[$jour][$heure] = $bloque == 1 ? 0 : 1;
-            }
-        }
-    }
-
-} catch(PDOException $e){
-    die("Erreur lors du chargement des données : " . $e->getMessage());
-}
-?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -75,24 +5,49 @@ try{
     <title>Contrôle parental - LinaFAI</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .subtitle{
-            color:#cccccc;
+        .page-title{
+            margin-bottom:10px;
+        }
+
+        .page-subtitle{
+            color:#bdbdbd;
             line-height:1.6;
             margin-bottom:20px;
+        }
+
+        .config-card{
+            margin-bottom:25px;
+        }
+
+        .config-current{
+            margin-top:18px;
+            padding:14px 16px;
+            background:#111;
+            border:1px solid #2a2a2a;
+            border-radius:10px;
+            color:#ddd;
+        }
+
+        .config-current strong{
+            color:#3ddc84;
+        }
+
+        .device-select{
+            max-width:460px;
         }
 
         .legend-box{
             display:flex;
             gap:20px;
             flex-wrap:wrap;
-            margin:20px 0;
+            margin:20px 0 10px 0;
         }
 
         .legend-item{
             display:flex;
             align-items:center;
             gap:8px;
-            color:#fff;
+            color:#ddd;
         }
 
         .legend-color{
@@ -144,9 +99,9 @@ try{
         .grid-table td:first-child{
             text-align:left;
             font-weight:bold;
-            white-space:nowrap;
-            background:#141414;
             color:#fff;
+            background:#151515;
+            white-space:nowrap;
         }
 
         .slot{
@@ -156,8 +111,8 @@ try{
             border-radius:5px;
             cursor:pointer;
             display:inline-block;
-            margin:0;
             padding:0;
+            margin:0;
         }
 
         .slot.allowed{
@@ -177,27 +132,15 @@ try{
 
         .actions-row button{
             width:auto;
+            padding:12px 18px;
         }
 
         .table-card{
             margin-top:25px;
         }
 
-        .config-box{
-            background:#111;
-            border:1px solid #2a2a2a;
-            border-radius:10px;
-            padding:14px;
-            margin-top:18px;
-            color:#fff;
-        }
-
-        .config-box strong{
-            color:#3ddc84;
-        }
-
-        .select-inline{
-            max-width:420px;
+        .table-card h2{
+            margin-bottom:15px;
         }
     </style>
 </head>
@@ -207,16 +150,16 @@ try{
 
 <div class="container">
 
-    <div class="card">
-        <h1>Contrôle parental par appareil</h1>
-        <p class="subtitle">
+    <div class="card config-card">
+        <h1 class="page-title">Contrôle parental par appareil</h1>
+        <p class="page-subtitle">
             Choisis un appareil, puis clique sur les cases horaires.
             Vert = autorisé, rouge = bloqué.
         </p>
 
         <form method="get">
             <label for="appareil_id">Appareil à configurer :</label>
-            <select name="appareil_id" id="appareil_id" class="select-inline" onchange="this.form.submit()">
+            <select name="appareil_id" id="appareil_id" class="device-select" onchange="this.form.submit()">
                 <?php foreach($appareils as $appareil): ?>
                     <option value="<?= (int)$appareil['id'] ?>" <?= ((int)$appareil['id'] === $appareil_id) ? 'selected' : '' ?>>
                         <?= htmlspecialchars(($appareil['nom'] ?: 'Appareil').' - '.$appareil['ip'].' - '.$appareil['mac']) ?>
@@ -226,7 +169,7 @@ try{
         </form>
 
         <?php if($appareilSelectionne): ?>
-            <div class="config-box">
+            <div class="config-current">
                 <strong>Configuration actuelle :</strong>
                 <?= htmlspecialchars(($appareilSelectionne['nom'] ?: 'Appareil').' - '.$appareilSelectionne['ip'].' - '.$appareilSelectionne['mac']) ?>
             </div>
