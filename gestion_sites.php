@@ -61,43 +61,23 @@ foreach($categories as $ligne){
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestion des sites bloqués</title>
-    <style>
-        body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px;}
-        .container{max-width:1200px;margin:auto;}
-        .box{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:25px;}
-        h1,h2,h3{margin-top:0;color:#1f2d3d;}
-        .btn{display:inline-block;background:#111827;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;margin-right:10px;}
-        .btn:hover{background:#000;}
-        select{padding:10px;border:1px solid #ccc;border-radius:8px;min-width:380px;}
-        .top-form{margin:15px 0 20px 0;}
-        .categorie{margin-bottom:25px;padding:15px;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa;}
-        .site-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #eee;}
-        .site-item:last-child{border-bottom:none;}
-        .actions{margin-top:20px;}
-        button{background:#2563eb;color:#fff;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;margin-right:10px;}
-        button:hover{background:#1d4ed8;}
-        .small{font-size:13px;color:#555;}
-        .vide{color:#777;font-style:italic;}
-        .checkzone{display:flex;align-items:center;gap:12px;}
-    </style>
+<meta charset="UTF-8">
+<title>Gestion des sites bloqués – LinaFAI</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<?php include 'menu.php'; ?>
+
 <div class="container">
 
-    <div class="box">
-        <a class="btn" href="index.php">Accueil</a>
-        <a class="btn" href="menu.php">Menu</a>
-        <a class="btn" href="gestion_restrictions.php">Plages horaires</a>
-    </div>
+    <h1>Gestion des sites bloqués par appareil</h1>
 
-    <div class="box">
-        <h1>Gestion des sites bloqués par appareil</h1>
-        <p class="small">Choisis un appareil, puis coche les sites à bloquer.</p>
+    <div class="card">
+        <p>Choisis un appareil, puis coche les sites à bloquer.</p>
 
-        <form method="get" class="top-form">
-            <label><strong>Appareil à configurer :</strong></label><br><br>
+        <form method="get">
+            <label>Appareil à configurer :</label>
             <select name="appareil_id" onchange="this.form.submit()">
                 <?php foreach($appareils as $appareil): ?>
                     <option value="<?= (int)$appareil['id'] ?>" <?= ((int)$appareil['id'] === $appareil_id) ? 'selected' : '' ?>>
@@ -112,37 +92,50 @@ foreach($categories as $ligne){
         <?php endif; ?>
     </div>
 
-    <div class="box">
+    <div class="card">
         <form action="save_sites_bloques.php" method="post">
             <input type="hidden" name="appareil_id" value="<?= (int)$appareil_id ?>">
 
             <?php foreach($groupes as $categorie): ?>
-                <div class="categorie">
-                    <h3><?= htmlspecialchars($categorie['nom']) ?></h3>
+                <div class="card">
+                    <h2><?= htmlspecialchars($categorie['nom']) ?></h2>
 
                     <?php if(count($categorie['sites']) > 0): ?>
-                        <?php foreach($categorie['sites'] as $site): ?>
-                            <div class="site-item">
-                                <span><?= htmlspecialchars($site['domaine']) ?></span>
-                                <label class="checkzone">
-                                    <input type="checkbox" name="sites[]" value="<?= (int)$site['id'] ?>"
-                                        <?= in_array($site['id'], $sitesBloques) ? 'checked' : '' ?>>
-                                    Bloqué
-                                </label>
-                            </div>
-                        <?php endforeach; ?>
+                        <table>
+                            <tr>
+                                <th>Site</th>
+                                <th>Blocage</th>
+                            </tr>
+                            <?php foreach($categorie['sites'] as $site): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($site['domaine']) ?></td>
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            name="sites[]"
+                                            value="<?= (int)$site['id'] ?>"
+                                            <?= in_array($site['id'], $sitesBloques) ? 'checked' : '' ?>
+                                            style="width:auto;"
+                                        >
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
                     <?php else: ?>
-                        <p class="vide">Aucun site dans cette catégorie.</p>
+                        <p>Aucun site dans cette catégorie.</p>
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
 
-            <div class="actions">
-                <button type="submit">Enregistrer les blocages</button>
-            </div>
+            <button type="submit">Enregistrer les blocages</button>
         </form>
     </div>
 
 </div>
+
+<div class="footer">
+    LinaFAI – Blocage des sites par appareil
+</div>
+
 </body>
 </html>
