@@ -43,42 +43,214 @@ foreach($appareils as $appareil){
 <head>
     <meta charset="UTF-8">
     <title>Gestion des restrictions NATBOX</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px;}
-        .container{max-width:1400px;margin:auto;}
-        .box{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:25px;}
-        h1,h2{margin-top:0;color:#1f2d3d;}
-        .btn{display:inline-block;background:#111827;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;margin-right:10px;}
-        .btn:hover{background:#000;}
-        select{padding:10px;border:1px solid #ccc;border-radius:8px;min-width:380px;}
-        table{border-collapse:collapse;width:100%;}
-        th,td{border:1px solid #ddd;text-align:center;padding:6px;}
-        th{background:#2563eb;color:#fff;font-size:13px;}
-        .jour{background:#f3f4f6;font-weight:bold;min-width:110px;text-align:left;padding-left:10px;}
-        .cell{width:28px;height:28px;cursor:pointer;border-radius:4px;display:inline-block;}
-        .bloque{background:#ef4444;}
-        .autorise{background:#22c55e;}
-        .legende{margin:15px 0;}
-        .legende span{display:inline-block;margin-right:20px;}
-        .carre{width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;border-radius:3px;}
-        .red{background:#ef4444;}
-        .green{background:#22c55e;}
-        .actions{margin-top:20px;}
-        button{background:#2563eb;color:#fff;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;margin-right:10px;}
-        button:hover{background:#1d4ed8;}
-        .small{font-size:13px;color:#555;}
-        .liste{width:100%;border-collapse:collapse;margin-top:15px;}
-        .liste th,.liste td{border:1px solid #ddd;padding:10px;text-align:left;}
-        .top-form{margin:15px 0 20px 0;}
+        body{
+            background:#0e0e0e;
+            color:#eee;
+        }
+
+        .container{
+            max-width:1300px;
+            margin:40px auto;
+            padding:20px;
+        }
+
+        .box{
+            background:linear-gradient(180deg,#1a1a1a,#0c0c0c);
+            border:1px solid #222;
+            border-radius:12px;
+            padding:30px;
+            margin-bottom:30px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h1,h2{
+            color:#3ddc84;
+            margin-bottom:18px;
+        }
+
+        .small{
+            font-size:14px;
+            color:#bbb;
+            line-height:1.6;
+        }
+
+        label{
+            color:#fff;
+            font-weight:bold;
+        }
+
+        select{
+            padding:10px 14px;
+            border:1px solid #333;
+            border-radius:8px;
+            min-width:420px;
+            max-width:100%;
+            background:#111;
+            color:#eee;
+            margin-top:10px;
+        }
+
+        .config-line{
+            margin-top:18px;
+            padding:14px 16px;
+            background:#111;
+            border:1px solid #2a2a2a;
+            border-radius:10px;
+            color:#ddd;
+        }
+
+        .config-line strong{
+            color:#3ddc84;
+        }
+
+        .legende{
+            margin:20px 0;
+            display:flex;
+            gap:20px;
+            flex-wrap:wrap;
+            color:#ddd;
+        }
+
+        .legende span{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin-right:0;
+        }
+
+        .carre{
+            width:16px;
+            height:16px;
+            display:inline-block;
+            border-radius:4px;
+            margin-right:0;
+        }
+
+        .red{
+            background:#ef4444;
+        }
+
+        .green{
+            background:#22c55e;
+        }
+
+        .table-wrap{
+            overflow-x:auto;
+            margin-top:20px;
+            border:1px solid #2a2a2a;
+            border-radius:12px;
+            background:#111;
+        }
+
+        table{
+            border-collapse:collapse;
+            width:100%;
+            min-width:1100px;
+            margin-top:0;
+        }
+
+        th,td{
+            border:1px solid #2a2a2a;
+            text-align:center;
+            padding:8px;
+        }
+
+        th{
+            background:#2563eb;
+            color:#fff;
+            font-size:13px;
+        }
+
+        .jour{
+            background:#151515;
+            font-weight:bold;
+            min-width:110px;
+            text-align:left;
+            padding-left:10px;
+            color:#fff;
+        }
+
+        .cell{
+            width:22px;
+            height:22px;
+            cursor:pointer;
+            border-radius:5px;
+            display:inline-block;
+        }
+
+        .bloque{
+            background:#ef4444;
+        }
+
+        .autorise{
+            background:#22c55e;
+        }
+
+        .actions{
+            margin-top:20px;
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        button{
+            background:#3ddc84;
+            color:#000;
+            border:none;
+            padding:12px 18px;
+            border-radius:8px;
+            cursor:pointer;
+            margin-right:0;
+            font-weight:bold;
+            width:auto;
+        }
+
+        button:hover{
+            background:#2fbf73;
+        }
+
+        .liste{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:15px;
+            min-width:0;
+        }
+
+        .liste th,.liste td{
+            border:1px solid #2a2a2a;
+            padding:12px;
+            text-align:left;
+        }
+
+        .liste th{
+            background:#2563eb;
+            color:#fff;
+        }
+
+        .liste td{
+            background:#0f0f0f;
+            color:#eee;
+        }
+
+        .top-form{
+            margin:15px 0 20px 0;
+        }
+
+        .footer{
+            text-align:center;
+            padding:20px;
+            color:#666;
+            font-size:13px;
+        }
     </style>
 </head>
 <body>
-<div class="container">
 
-    <div class="box">
-        <a class="btn" href="index.php">Accueil</a>
-        <a class="btn" href="menu.php">Menu</a>
-    </div>
+<?php include 'menu.php'; ?>
+
+<div class="container">
 
     <div class="box">
         <h1>Contrôle parental par appareil</h1>
@@ -96,7 +268,10 @@ foreach($appareils as $appareil){
         </form>
 
         <?php if($appareilSelectionne): ?>
-            <p><strong>Configuration actuelle :</strong> <?= htmlspecialchars(($appareilSelectionne['nom'] ?: 'Appareil').' - '.$appareilSelectionne['ip'].' - '.$appareilSelectionne['mac']) ?></p>
+            <div class="config-line">
+                <strong>Configuration actuelle :</strong>
+                <?= htmlspecialchars(($appareilSelectionne['nom'] ?: 'Appareil').' - '.$appareilSelectionne['ip'].' - '.$appareilSelectionne['mac']) ?>
+            </div>
         <?php endif; ?>
 
         <div class="legende">
@@ -107,28 +282,30 @@ foreach($appareils as $appareil){
         <form action="save_restrictions.php" method="post">
             <input type="hidden" name="appareil_id" value="<?= (int)$appareil_id ?>">
 
-            <table>
-                <tr>
-                    <th>Jour</th>
-                    <?php for($h=0;$h<24;$h++): ?>
-                        <th><?= $h ?></th>
-                    <?php endfor; ?>
-                </tr>
-
-                <?php foreach($jours as $cle => $libelle): ?>
+            <div class="table-wrap">
+                <table>
                     <tr>
-                        <td class="jour"><?= $libelle ?></td>
-                        <?php for($h=0;$h<24;$h++):
-                            $bloque = isset($grille[$cle][$h]) ? $grille[$cle][$h] : 0;
-                        ?>
-                            <td>
-                                <input type="hidden" name="grille[<?= $cle ?>][<?= $h ?>]" value="<?= $bloque ?>" class="input-hidden">
-                                <div class="cell <?= $bloque ? 'bloque' : 'autorise' ?>" onclick="toggleCell(this)"></div>
-                            </td>
+                        <th>Jour</th>
+                        <?php for($h=0;$h<24;$h++): ?>
+                            <th><?= $h ?></th>
                         <?php endfor; ?>
                     </tr>
-                <?php endforeach; ?>
-            </table>
+
+                    <?php foreach($jours as $cle => $libelle): ?>
+                        <tr>
+                            <td class="jour"><?= $libelle ?></td>
+                            <?php for($h=0;$h<24;$h++):
+                                $bloque = isset($grille[$cle][$h]) ? $grille[$cle][$h] : 0;
+                            ?>
+                                <td>
+                                    <input type="hidden" name="grille[<?= $cle ?>][<?= $h ?>]" value="<?= $bloque ?>" class="input-hidden">
+                                    <div class="cell <?= $bloque ? 'bloque' : 'autorise' ?>" onclick="toggleCell(this)"></div>
+                                </td>
+                            <?php endfor; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
 
             <div class="actions">
                 <button type="submit">Enregistrer la grille</button>
@@ -158,6 +335,10 @@ foreach($appareils as $appareil){
         </table>
     </div>
 
+</div>
+
+<div class="footer">
+    LinaFAI – Espace de contrôle parental
 </div>
 
 <script>
