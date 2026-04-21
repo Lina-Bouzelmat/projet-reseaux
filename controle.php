@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Contrôle - LinaFAI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
 <?php include 'menu.php'; ?>
 
 <div class="container">
@@ -32,3 +41,6 @@
 <div class="footer">
     LinaFAI – Espace de contrôle parental
 </div>
+
+</body>
+</html>
